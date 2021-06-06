@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define GLM_SWIZZLE
 
@@ -14,5 +14,5 @@ private:
 
 public:
     Cylinder(glm::vec3 center, float radius, float height);
-    bool intersect(Ray ray);
+    bool intersect(Ray ray) override;
 };

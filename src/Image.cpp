@@ -6,7 +6,7 @@
 Image::Image(unsigned int height, unsigned int width) :
     _height(height),
     _width(width),
-    _buffer(std::make_unique<Pixel[]>(height* width))
+    _buffer(std::make_unique<Pixel[]>((size_t) height * width))
 {
 }
 
