@@ -26,3 +26,8 @@ void Image::write(const char* fileName)
 }
 
 Pixel& Image::operator[](std::size_t index) const { return _buffer[index]; }
+
+float Image::aspectRatio() const
+{
+    return (float)_width / (float)_height;
+}

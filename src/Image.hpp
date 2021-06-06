@@ -27,4 +27,6 @@ public:
     void write(const char* fileName);
 
     Pixel& operator[](std::size_t index) const;
+
+    float aspectRatio() const;
 };
