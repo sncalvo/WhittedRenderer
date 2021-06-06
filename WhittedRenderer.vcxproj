@@ -151,13 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Sphere.cpp" />
+    <ClCompile Include="src\Solids\Sphere.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Ray.hpp" />
     <ClInclude Include="src\math.hpp" />
-    <ClInclude Include="src\Sphere.hpp" />
+    <ClInclude Include="src\Solids\Solid.hpp" />
+    <ClInclude Include="src\Solids\Sphere.hpp" />
     <ClInclude Include="src\Image.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

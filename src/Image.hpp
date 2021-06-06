@@ -10,9 +10,9 @@ struct Pixel
 class Image
 {
 private:
-    static const int CHANNELS = 3;
-    static const int HEIGHT = 1080;
-    static const int WIDTH = 1920;
+    static const auto CHANNELS = 3;
+    static const auto HEIGHT = 1080;
+    static const auto WIDTH = 1920;
 
     unsigned int _height, _width;
     std::unique_ptr<Pixel[]> _buffer;
