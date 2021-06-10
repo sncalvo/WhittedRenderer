@@ -151,12 +151,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Solids\Disc.cpp" />
     <ClCompile Include="src\Solids\Cylinder.cpp" />
     <ClCompile Include="src\Solids\Sphere.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Solids\Disc.hpp" />
     <ClInclude Include="src\Log.hpp" />
     <ClInclude Include="src\Solids\Cylinder.hpp" />
     <ClInclude Include="src\Ray.hpp" />

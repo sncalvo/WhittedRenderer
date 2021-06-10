@@ -13,5 +13,5 @@ private:
 public:
     Sphere(glm::vec3 center, float radius);
 
-    bool intersect(Ray ray);
+    bool intersect(Ray ray) override;
 };
