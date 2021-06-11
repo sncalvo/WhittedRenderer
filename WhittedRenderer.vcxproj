@@ -151,19 +151,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Solids\Cone.cpp" />
     <ClCompile Include="src\Solids\Cylinder.cpp" />
     <ClCompile Include="src\Solids\Sphere.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Log.hpp" />
+    <ClInclude Include="src\Solids\Cone.hpp" />
     <ClInclude Include="src\Solids\Cylinder.hpp" />
     <ClInclude Include="src\Ray.hpp" />
     <ClInclude Include="src\math.hpp" />
     <ClInclude Include="src\Solids\Solid.hpp" />
     <ClInclude Include="src\Solids\Sphere.hpp" />
     <ClInclude Include="src\Image.hpp" />
+    <ClInclude Include="src\Transform.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

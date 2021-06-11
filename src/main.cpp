@@ -3,6 +3,7 @@
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
+#include "Solids/Cone.hpp"
 
 int main(void)
 {
@@ -10,7 +11,9 @@ int main(void)
 
     // Solids
     //Sphere sphere(glm::vec3(0.f, 0.f, 1.5f), .4f);
-    Cylinder cylinder(glm::vec3(0.f, -1.f, 1.5f), .4f, .5f);
+    //Cylinder cylinder(glm::vec3(0.f, -1.f, 1.5f), .4f, .5f);
+    Cone cone = Cone();
+    cone.transform.position = glm::vec3(1.f, 1.f, 1.5f);
 
     const auto focalLength = 1.f;
 
@@ -24,7 +27,7 @@ int main(void)
             Ray ray { glm::vec3(0.f), glm::vec3(x, y, focalLength) };
 
             auto rowIndex = (image.getHeight() - row);
-            if (cylinder.intersect(ray))
+            if (cone.intersect(ray))
             {
                 image[rowIndex * image.getWidth() + column] = { 0xFF, 0x0, 0x0 };
             }
