@@ -2,10 +2,7 @@
 
 #include <memory>
 
-struct Pixel
-{
-    unsigned char r, g, b;
-};
+#include "Pixel.hpp"
 
 class Image
 {

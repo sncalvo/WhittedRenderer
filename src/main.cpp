@@ -4,13 +4,19 @@
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
 
+#include <vector>;
+
 int main(void)
 {
     Image image(1080, 1920);
 
     // Solids
-    //Sphere sphere(glm::vec3(0.f, 0.f, 1.5f), .4f);
-    Cylinder cylinder(glm::vec3(0.f, -1.f, 1.5f), .4f, .5f);
+    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3(0.f, 0.f, 2.f), .4f);
+    std::unique_ptr<Cylinder> cylinder = std::make_unique<Cylinder>(glm::vec3(0.f, 0.f, 2.f), .4f, .5f);
+
+    std::vector<std::unique_ptr<Solid>> solids;
+    solids.push_back(std::move(sphere));
+    solids.push_back(std::move(cylinder));
 
     const auto focalLength = 1.f;
 
@@ -18,19 +24,22 @@ int main(void)
     {
         for (auto column = 0; column < image.getWidth(); ++column)
         {
+            float nearestIntersection = UINT32_MAX;
+
             float y = (row / (image.getHeight() - 1.f)) * 2 - 1;
             float x = (column / (image.getHeight() - 1.f)) * 2 - image.aspectRatio();
 
             Ray ray { glm::vec3(0.f), glm::vec3(x, y, focalLength) };
 
             auto rowIndex = (image.getHeight() - row);
-            if (cylinder.intersect(ray))
+
+            for (auto& solid : solids)
             {
-                image[rowIndex * image.getWidth() + column] = { 0xFF, 0x0, 0x0 };
-            }
-            else
-            {
-                image[rowIndex * image.getWidth() + column] = { 0x0, 0x0, 0x0 };
+                if (auto intersection = solid->intersect(ray); intersection.has_value() && nearestIntersection >= intersection->position.z)
+                {
+                    nearestIntersection = intersection->position.z;
+                    image[rowIndex * image.getWidth() + column] = intersection->pixel;
+                }
             }
         }
     }

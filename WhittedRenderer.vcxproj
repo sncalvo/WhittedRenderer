@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\Solids\Disc.cpp" />
     <ClCompile Include="src\Solids\Cylinder.cpp" />
     <ClCompile Include="src\Solids\Sphere.cpp" />
@@ -158,6 +160,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Light.hpp" />
+    <ClInclude Include="src\Pixel.hpp" />
     <ClInclude Include="src\Solids\Disc.hpp" />
     <ClInclude Include="src\Log.hpp" />
     <ClInclude Include="src\Solids\Cylinder.hpp" />

@@ -1,4 +1,4 @@
-#include "Cylinder.hpp"
+﻿#include "Cylinder.hpp"
 
 #include <math.h>
 #include "../math.hpp"
@@ -9,7 +9,7 @@ Cylinder::Cylinder(glm::vec3 center, float radius, float height)
 {
 }
 
-bool Cylinder::intersect(Ray ray)
+std::optional<RayHit> Cylinder::intersect(Ray &ray)
 {
     auto rayToViewer = ray.origin - _center;
 
@@ -19,19 +19,20 @@ bool Cylinder::intersect(Ray ray)
         math::square(_center.x) + math::square(_center.z) - 2 *
         (ray.origin.x * _center.x + ray.origin.z * _center.z) - math::square(_radius);
 
+    // TODO: Add top and bottom
     auto t = math::solve(a, b, c);
     if (t < 0)
     {
-        // TODO: Check for top intersection
-        return false;
+        return {};
     }
 
     auto y = ray.origin.y + t * ray.direction.y;
 
     if (math::abs(y - _center.y) >= _height / 2)
     {
-        return false;
+        return {};
     }
 
-    return true;
+    auto intersection = ray.origin + t * ray.direction;
+    return RayHit{ intersection, Pixel{0x00, 0xFF, 0x0} };
 }

@@ -11,7 +11,7 @@ private:
     float _radius;
 
 public:
-    Sphere(glm::vec3 center, float radius);
+    Sphere(glm::vec3 center, float radius, Material material);
 
-    bool intersect(Ray ray) override;
+    std::optional<RayHit> intersect(Ray &ray) override;
 };

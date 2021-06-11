@@ -13,5 +13,5 @@ private:
 public:
     Disc(glm::vec3 center, glm::vec3 normal, float radius);
 
-    bool intersect(Ray ray) override;
+    std::optional<RayHit> intersect(Ray& ray) override;
 };

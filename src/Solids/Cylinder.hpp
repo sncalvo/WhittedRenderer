@@ -14,5 +14,5 @@ private:
 
 public:
     Cylinder(glm::vec3 center, float radius, float height);
-    bool intersect(Ray ray) override;
+    std::optional<RayHit> intersect(Ray &ray) override;
 };
