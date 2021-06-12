@@ -19,5 +19,11 @@ protected:
     }
 
 public:
+    virtual ~Solid() {};
     virtual std::optional<RayHit> intersect(Ray& ray) = 0;
+    virtual glm::vec3 calculateNormal(glm::vec3 point) const = 0;
+    Material getMaterial() const
+    {
+        return _material;
+    }
 };

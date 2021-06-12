@@ -2,10 +2,11 @@
 
 #include "../math.hpp"
 
-Disc::Disc(glm::vec3 center, glm::vec3 normal, float radius) :
+Disc::Disc(glm::vec3 center, glm::vec3 normal, float radius, Material material) :
     _center(center),
     _normal(normal),
-    _radius(radius)
+    _radius(radius),
+    Solid(material)
 {
 }
 
@@ -23,7 +24,8 @@ std::optional<RayHit> Disc::intersect(Ray &ray)
         
         if (pointInCircle)
         {
-            return RayHit{ glm::vec3{0.f}, Pixel{0xFF, 0x0, 0x0} };
+            auto normal = calculateNormal(intersectionPoint);
+            return RayHit{ glm::vec3{0.f}, normal, this, Pixel{0xFF, 0x0, 0x0} };
         }
         else
         {
@@ -32,4 +34,9 @@ std::optional<RayHit> Disc::intersect(Ray &ray)
     }
 
     return {};
+}
+
+glm::vec3 Disc::calculateNormal(glm::vec3 point) const
+{
+    return _normal;
 }

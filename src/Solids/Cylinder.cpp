@@ -4,8 +4,8 @@
 #include "../math.hpp"
 #include "../Log.hpp"
 
-Cylinder::Cylinder(glm::vec3 center, float radius, float height)
-    : _center(center), _radius(radius), _height(height)
+Cylinder::Cylinder(glm::vec3 center, float radius, float height, Material material)
+    : _center(center), _radius(radius), _height(height), Solid(material)
 {
 }
 
@@ -34,5 +34,12 @@ std::optional<RayHit> Cylinder::intersect(Ray &ray)
     }
 
     auto intersection = ray.origin + t * ray.direction;
-    return RayHit{ intersection, Pixel{0x00, 0xFF, 0x0} };
+    auto normal = calculateNormal(intersection);
+    return RayHit{ intersection, normal, this, Pixel{0x00, 0xFF, 0x0} };
+}
+
+glm::vec3 Cylinder::calculateNormal(glm::vec3 point) const
+{
+    auto difference = point - _center;
+    return glm::vec3(difference.x, 0.f, difference.z);
 }

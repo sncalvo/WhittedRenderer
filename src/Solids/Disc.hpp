@@ -11,7 +11,8 @@ private:
     float _radius;
 
 public:
-    Disc(glm::vec3 center, glm::vec3 normal, float radius);
+    Disc(glm::vec3 center, glm::vec3 normal, float radius, Material material);
 
     std::optional<RayHit> intersect(Ray& ray) override;
+    glm::vec3 calculateNormal(glm::vec3 point) const override;
 };

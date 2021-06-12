@@ -10,9 +10,27 @@ int main(void)
 {
     Image image(1080, 1920);
 
+    Material material{
+        glm::vec3(1.f, 0.f, 0.f),
+        glm::vec3(1.f, 1.f, 1.f),
+        glm::vec3(0.f, 0.f, 0.f),
+        1.f,
+        1.f,
+        0.f,
+    };
+
+    Material material2{
+        glm::vec3(0.f, 1.f, 0.f),
+        glm::vec3(1.f, 1.f, 1.f),
+        glm::vec3(0.f, 0.f, 0.f),
+        1.f,
+        1.f,
+        0.f,
+    };
+
     // Solids
-    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3(0.f, 0.f, 2.f), .4f);
-    std::unique_ptr<Cylinder> cylinder = std::make_unique<Cylinder>(glm::vec3(0.f, 0.f, 2.f), .4f, .5f);
+    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3(2.5f, 0.f, 3.f), 1.f, material);
+    std::unique_ptr<Cylinder> cylinder = std::make_unique<Cylinder>(glm::vec3(-1.5f, 0.f, 3.f), 1.5f, 2.f, material2);
 
     std::vector<std::unique_ptr<Solid>> solids;
     solids.push_back(std::move(sphere));
@@ -33,14 +51,7 @@ int main(void)
 
             auto rowIndex = (image.getHeight() - row);
 
-            for (auto& solid : solids)
-            {
-                if (auto intersection = solid->intersect(ray); intersection.has_value() && nearestIntersection >= intersection->position.z)
-                {
-                    nearestIntersection = intersection->position.z;
-                    image[rowIndex * image.getWidth() + column] = intersection->pixel;
-                }
-            }
+            image[rowIndex * image.getWidth() + column] = ray.calculateColor(solids, 0);
         }
     }
 

@@ -19,10 +19,16 @@ std::optional<RayHit> Sphere::intersect(Ray &ray)
     if (t != math::NO_ROOT)
     {
         auto intersection = ray.origin + t * ray.direction;
-        return RayHit{ intersection, Pixel{0xFF, 0x0, 0x0} };
+        auto normal = calculateNormal(intersection);
+        return RayHit{ intersection, normal, this, Pixel{0xFF, 0x0, 0x0} };
     }
     else
     {
         return {};
     }
+}
+
+glm::vec3 Sphere::calculateNormal(glm::vec3 point) const
+{
+    return glm::normalize(point - _center);
 }
