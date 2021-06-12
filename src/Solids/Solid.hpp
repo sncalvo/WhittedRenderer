@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <optional>
+
 #include "../Ray.hpp"
 #include "../Pixel.hpp"
 

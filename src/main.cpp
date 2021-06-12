@@ -1,14 +1,19 @@
 ﻿#include <iostream>
+#include <vector>
+#include <glm/gtc/random.hpp>
 
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
 
-#include <vector>;
+constexpr auto SAMPLES = 10;
+
+constexpr auto THREADS = 8;
+constexpr auto THREAD_LOAD = 10;
 
 int main(void)
 {
-    Image image(1080, 1920);
+    Image image(768, 1366);
 
     Material material{
         glm::vec3(1.f, 0.f, 0.f),
@@ -40,18 +45,25 @@ int main(void)
 
     for (auto row = image.getHeight(); row > 0; --row)
     {
+        std::cerr << "\rScanlines remaining: " << row << ' ' << std::flush;
         for (auto column = 0; column < image.getWidth(); ++column)
         {
-            float nearestIntersection = UINT32_MAX;
-
-            float y = (row / (image.getHeight() - 1.f)) * 2 - 1;
-            float x = (column / (image.getHeight() - 1.f)) * 2 - image.aspectRatio();
-
-            Ray ray { glm::vec3(0.f), glm::vec3(x, y, focalLength) };
-
+            Pixel pixel{0x0, 0x0, 0x0};
             auto rowIndex = (image.getHeight() - row);
 
-            image[rowIndex * image.getWidth() + column] = ray.calculateColor(solids, 0);
+            for (auto sample = 0; sample < SAMPLES; ++sample)
+            {
+                float nearestIntersection = UINT32_MAX;
+
+                float y = ((row + glm::gaussRand(0.f, 1.f)) / (image.getHeight() - 1.f)) * 2 - 1;
+                float x = ((column + glm::gaussRand(0.f, 1.f)) / (image.getHeight() - 1.f)) * 2 - image.aspectRatio();
+
+                Ray ray{ glm::vec3(0.f), glm::vec3(x, y, focalLength) };
+
+                pixel += ray.calculateColor(solids, 0) / SAMPLES;
+            }
+
+            image[rowIndex * image.getWidth() + column] = pixel;
         }
     }
 

@@ -51,7 +51,7 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::unique_ptr<Solid>> &soli
 
     std::vector<Light> lights;
     lights.push_back(light);
-    
+
     const Material& material = hit.solid->getMaterial();
 
     // Ambient light
