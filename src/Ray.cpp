@@ -8,7 +8,7 @@
 #include "Ray.hpp"
 #include "Light.hpp"
 
-auto constexpr MAX_DEPTH = 5;
+auto constexpr MAX_DEPTH = 0;
 auto constexpr BACKGROUND_COLOR = Pixel{ 0, 0, 0 };
 
 float attenuation(float distance)

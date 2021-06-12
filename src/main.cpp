@@ -6,7 +6,7 @@
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
 
-constexpr auto SAMPLES = 10;
+constexpr auto SAMPLES = 1;
 
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
@@ -34,12 +34,12 @@ int main(void)
     };
 
     // Solids
-    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3(2.5f, 0.f, 3.f), 1.f, material);
-    std::unique_ptr<Cylinder> cylinder = std::make_unique<Cylinder>(glm::vec3(-1.5f, 0.f, 3.f), 1.5f, 2.f, material2);
+    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3(0.f, 0.f, 3.f), 1.f, material);
+    //std::unique_ptr<Cylinder> cylinder = std::make_unique<Cylinder>(glm::vec3(-1.5f, 0.f, 3.f), 1.5f, 2.f, material2);
 
     std::vector<std::unique_ptr<Solid>> solids;
     solids.push_back(std::move(sphere));
-    solids.push_back(std::move(cylinder));
+    //solids.push_back(std::move(cylinder));
 
     const auto focalLength = 1.f;
 
@@ -55,8 +55,15 @@ int main(void)
             {
                 float nearestIntersection = UINT32_MAX;
 
-                float y = ((row + glm::gaussRand(0.f, 1.f)) / (image.getHeight() - 1.f)) * 2 - 1;
-                float x = ((column + glm::gaussRand(0.f, 1.f)) / (image.getHeight() - 1.f)) * 2 - image.aspectRatio();
+                float randomY = 0.f;
+                float randomX = 0.f;
+                if (SAMPLES > 1) {
+                    randomY = glm::gaussRand(0.f, 1.f);
+                    randomX = glm::gaussRand(0.f, 1.f);
+                }
+
+                float y = ((row + randomX) / (image.getHeight() - 1.f)) * 2 - 1;
+                float x = ((column + randomY) / (image.getHeight() - 1.f)) * 2 - image.aspectRatio();
 
                 Ray ray{ glm::vec3(0.f), glm::vec3(x, y, focalLength) };
 
