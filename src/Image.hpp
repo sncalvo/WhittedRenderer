@@ -15,7 +15,7 @@ private:
     std::unique_ptr<Pixel[]> _buffer;
 
 public:
-    Image(unsigned int height = HEIGHT, unsigned int width = WIDTH);
+    Image(unsigned int width = WIDTH, unsigned int height = HEIGHT);
 
     unsigned int getWidth();
 

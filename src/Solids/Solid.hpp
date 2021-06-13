@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <memory>
 #include <optional>
 
 #include "../Ray.hpp"
@@ -7,11 +8,11 @@
 
 struct Material
 {
-    glm::vec3 diffuseColor, specularColor, transmissionColor;
-    float diffuse, specular, transmission;
+    glm::vec3 diffuseColor, specularColor;
+    float diffuse, specular, transparency, refractionIndex;
 };
 
-class Solid
+class Solid : public std::enable_shared_from_this<Solid>
 {
 protected:
     Material _material;
@@ -21,7 +22,7 @@ protected:
 
 public:
     virtual ~Solid() {};
-    virtual std::optional<RayHit> intersect(Ray& ray) = 0;
+    virtual std::optional<RayHit> intersect(const Ray& ray) = 0;
     virtual glm::vec3 calculateNormal(glm::vec3 point) const = 0;
     Material getMaterial() const
     {

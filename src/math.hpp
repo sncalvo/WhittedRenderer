@@ -17,18 +17,25 @@ namespace math
         return x * x;
     }
 
-    inline float solve(float a, float b, float c)
+    inline std::vector<float> solve(float a, float b, float c)
     {
         auto discriminant = square(b) - 4 * a * c;
 
+        std::vector<float> roots;
+
         if (discriminant >= 0)
         {
-            return (-b - sqrt(discriminant)) / (2 * a);
+            if (discriminant == 0)
+            {
+                roots.push_back(-b / (2 * a));
+            }
+            else
+            {
+                roots.push_back(-b - std::sqrt(discriminant) / (2 * a));
+                roots.push_back(-b + std::sqrt(discriminant) / (2 * a));
+            }
         }
-        else
-        {
-            return NO_ROOT;
-        }
+        return roots;
     }
 
     inline float abs(float x)

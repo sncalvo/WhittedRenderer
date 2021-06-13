@@ -10,7 +10,7 @@ Disc::Disc(glm::vec3 center, glm::vec3 normal, float radius, Material material) 
 {
 }
 
-std::optional<RayHit> Disc::intersect(Ray &ray)
+std::optional<RayHit> Disc::intersect(const Ray &ray)
 {
     auto t = glm::dot(_normal, (_center - ray.origin)) / glm::dot(_normal, ray.direction);
     
@@ -25,7 +25,7 @@ std::optional<RayHit> Disc::intersect(Ray &ray)
         if (pointInCircle)
         {
             auto normal = calculateNormal(intersectionPoint);
-            return RayHit{ glm::vec3{0.f}, normal, this, Pixel{0xFF, 0x0, 0x0} };
+            return RayHit{ glm::vec3{0.f}, normal, shared_from_this(), t };
         }
         else
         {

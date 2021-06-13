@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <memory>
+
 #include <glm/glm.hpp>
 
 #include "Solid.hpp"
@@ -13,6 +15,6 @@ private:
 public:
     Disc(glm::vec3 center, glm::vec3 normal, float radius, Material material);
 
-    std::optional<RayHit> intersect(Ray& ray) override;
+    std::optional<RayHit> intersect(const Ray& ray) override;
     glm::vec3 calculateNormal(glm::vec3 point) const override;
 };

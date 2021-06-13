@@ -6,7 +6,7 @@ Sphere::Sphere(glm::vec3 center, float radius, Material material) : _center(cent
 {
 }
 
-std::optional<RayHit> Sphere::intersect(Ray &ray)
+std::optional<RayHit> Sphere::intersect(const Ray &ray)
 {
     auto rayToViewer = ray.origin - _center;
 
@@ -14,18 +14,28 @@ std::optional<RayHit> Sphere::intersect(Ray &ray)
     auto b = 2 * glm::dot(ray.direction, rayToViewer);
     auto c = glm::dot(rayToViewer, rayToViewer) - _radius * _radius;
 
-    auto t = math::solve(a, b, c);
+    auto roots = math::solve(a, b, c);
 
-    if (t != math::NO_ROOT)
+    std::optional<float> t;
+    for (const auto& root : roots)
     {
-        auto intersection = ray.origin + t * ray.direction;
-        auto normal = calculateNormal(intersection);
-        return RayHit{ intersection, normal, this, Pixel{0xFF, 0x0, 0x0} };
+        if (root < 0)
+        {
+            continue;
+        }
+
+        t = root;
+        break;
     }
-    else
+
+    if (!t.has_value())
     {
         return {};
     }
+
+    auto intersection = ray.origin + *t * ray.direction;
+    auto normal = calculateNormal(intersection);
+    return RayHit{ intersection, normal, shared_from_this(), *t };
 }
 
 glm::vec3 Sphere::calculateNormal(glm::vec3 point) const

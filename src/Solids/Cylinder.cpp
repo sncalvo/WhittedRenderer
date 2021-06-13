@@ -9,7 +9,7 @@ Cylinder::Cylinder(glm::vec3 center, float radius, float height, Material materi
 {
 }
 
-std::optional<RayHit> Cylinder::intersect(Ray &ray)
+std::optional<RayHit> Cylinder::intersect(const Ray &ray)
 {
     auto rayToViewer = ray.origin - _center;
 
@@ -19,27 +19,44 @@ std::optional<RayHit> Cylinder::intersect(Ray &ray)
         math::square(_center.x) + math::square(_center.z) - 2 *
         (ray.origin.x * _center.x + ray.origin.z * _center.z) - math::square(_radius);
 
-    // TODO: Add top and bottom
-    auto t = math::solve(a, b, c);
-    if (t < 0)
+    // TODO: Add top and bottom caps
+
+    auto roots = math::solve(a, b, c);
+
+    std::optional<float> t;
+    for (const auto& root : roots)
+    {
+        if (root < 0)
+        {
+            continue;
+        }
+
+        auto intersection = ray.origin + root * ray.direction;
+
+        // TODO: Check y coordinate if we want to rotate cylinders
+        if (math::abs(intersection.y - _center.y) > _height / 2)
+        {
+            continue;
+        }
+
+        t = root;
+        break;
+    }
+
+    if (!t.has_value())
     {
         return {};
     }
 
-    auto y = ray.origin.y + t * ray.direction.y;
+    auto visibleIntersection = ray.origin + *t * ray.direction;
 
-    if (math::abs(y - _center.y) >= _height / 2)
-    {
-        return {};
-    }
-
-    auto intersection = ray.origin + t * ray.direction;
-    auto normal = calculateNormal(intersection);
-    return RayHit{ intersection, normal, this, Pixel{0x00, 0xFF, 0x0} };
+    auto normal = calculateNormal(visibleIntersection);
+    return RayHit{ visibleIntersection, normal, shared_from_this(), *t };
 }
 
 glm::vec3 Cylinder::calculateNormal(glm::vec3 point) const
 {
     auto difference = point - _center;
-    return glm::vec3(difference.x, 0.f, difference.z);
+    // TODO: Check y coordinate if we want to rotate cylinders
+    return glm::normalize(glm::vec3(difference.x, 0.f, difference.z));
 }
