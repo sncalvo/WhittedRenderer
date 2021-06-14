@@ -3,9 +3,9 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <StbImage/stb_image_write.h>
 
-Image::Image(unsigned int height, unsigned int width) :
-    _height(height),
+Image::Image(unsigned int width, unsigned int height) :
     _width(width),
+    _height(height),
     _buffer(std::make_unique<Pixel[]>((size_t) height * width))
 {
 }
