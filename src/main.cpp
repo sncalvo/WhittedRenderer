@@ -14,6 +14,7 @@
 #include "LoadingBar.hpp"
 
 #include "windows.h"
+#include "Solids/Plane.hpp"
 
 constexpr auto SAMPLES = 4;
 
@@ -45,6 +46,14 @@ int main(void)
         1.f,
         2.f
     };
+    Material material3{
+        glm::vec3(1.f, 1.f, 1.f),
+        glm::vec3(1.f, 1.f, 1.f),
+        1.f,
+        1.f,
+        0.f,
+        0.f
+    };
 
     // Solids
     std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(
@@ -58,9 +67,27 @@ int main(void)
         2.f,
         material2
     );
+    std::shared_ptr<Plane> plane = std::make_shared<Plane>(
+        glm::vec3(70.f, 0.f, 0.f),
+        glm::vec3(-1.f, 0.f, 0.f),
+        material
+    );
+    std::shared_ptr<Plane> plane2 = std::make_shared<Plane>(
+        glm::vec3(-70.f, 0.f, 0.f),
+        glm::vec3(1.f, 0.f, 0.f),
+        material2
+    );
+    std::shared_ptr<Plane> plane3 = std::make_shared<Plane>(
+        glm::vec3(0.f, 0.f, 20.f),
+        glm::vec3(0.f, 0.f, -1.f),
+        material3
+    );
 
     std::vector<std::shared_ptr<Solid>> solids;
     solids.push_back(std::move(sphere));
+    solids.push_back(std::move(plane));
+    solids.push_back(std::move(plane2));
+    solids.push_back(std::move(plane3));
     solids.push_back(std::move(cylinder));
 
     // Camera
