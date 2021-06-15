@@ -8,6 +8,8 @@
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
+#include "LoadingBar.hpp"
+#include "windows.h"
 
 constexpr auto SAMPLES = 1;
 
@@ -15,9 +17,13 @@ constexpr auto SAMPLES = 1;
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
 
+
 int main(void)
 {
-    Image image(1280, 720);
+    int width = 1366;
+    int height = 768;
+    LoadingBar loading("Render started", height);
+    Image image(width, height);
 
     Material material{
         glm::vec3(1.f, 0.f, 0.f),
@@ -73,7 +79,6 @@ int main(void)
 
     for (auto row = image.getHeight(); row > 0; --row)
     {
-        std::cerr << "\rScanlines remaining: " << row << ' ' << std::flush;
         for (auto column = 0; column < image.getWidth(); ++column)
         {
             Pixel pixel{0x00, 0x00, 0x00};
@@ -100,16 +105,23 @@ int main(void)
 
             image[rowIndex * image.getWidth() + column] = pixel;
         }
+        loading.incrementProgress(1);
+        loading.draw("Rendering");
     }
 
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    std::cout << "\rRay tracing took " << duration / 1000.0 << " seconds" << std::endl;
 
     auto now = time(nullptr);
 
     std::stringstream fileName;
-    fileName << "images/test-" << now << ".png";
-    image.write(fileName.str().c_str());
+    fileName << "images\\test-" << now << ".png";
+    std::cout << std::endl << "Ray tracing took " << duration / 1000.0 << " seconds" << std::endl;
+    std::cout << "Saving...";
+    auto fileNameStr = fileName.str();
+    image.write(fileNameStr.c_str());
+    std::cout << std::endl <<"Image saved at " << fileNameStr << std::endl;
+    std::cout << "Opening " << fileNameStr << std::endl;
+    ShellExecute(0, 0, std::wstring(fileNameStr.begin(), fileNameStr.end()).c_str(), 0, 0, SW_SHOW);
 }
