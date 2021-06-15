@@ -31,8 +31,8 @@ namespace math
             }
             else
             {
-                roots.push_back(-b - std::sqrt(discriminant) / (2 * a));
-                roots.push_back(-b + std::sqrt(discriminant) / (2 * a));
+                roots.push_back((-b - std::sqrt(discriminant)) / (2 * a));
+                roots.push_back((-b + std::sqrt(discriminant)) / (2 * a));
             }
         }
         return roots;
