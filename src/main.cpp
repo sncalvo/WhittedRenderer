@@ -22,10 +22,10 @@ int main(void)
     Material material{
         glm::vec3(1.f, 0.f, 0.f),
         glm::vec3(1.f, 1.f, 1.f),
-        .8f,
+        1.f,
         1.f,
         0.f,
-        1.3f
+        0.f
     };
 
     Material material2{
@@ -44,7 +44,7 @@ int main(void)
         material
     );
     std::shared_ptr<Cylinder> cylinder = std::make_shared<Cylinder>(
-        glm::vec3(0.f, -1.5f, 5.f),
+        glm::vec3(2.f, -2.f, 3.f),
         1.f,
         2.f,
         material2
@@ -52,7 +52,7 @@ int main(void)
 
     std::vector<std::shared_ptr<Solid>> solids;
     solids.push_back(std::move(sphere));
-    //solids.push_back(std::move(cylinder));
+    solids.push_back(std::move(cylinder));
 
     // Camera
     auto vFov = 45.f;

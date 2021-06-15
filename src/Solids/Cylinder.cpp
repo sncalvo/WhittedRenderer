@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include "../math.hpp"
-#include "../Log.hpp"
 
 Cylinder::Cylinder(glm::vec3 center, float radius, float height, Material material)
     : _center(center), _radius(radius), _height(height), Solid(material)

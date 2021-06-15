@@ -12,7 +12,7 @@ std::optional<RayHit> Sphere::intersect(const Ray &ray)
 
     auto a = glm::dot(ray.direction, ray.direction);
     auto b = 2 * glm::dot(ray.direction, rayToViewer);
-    auto c = glm::dot(rayToViewer, rayToViewer) - _radius * _radius;
+    auto c = glm::dot(rayToViewer, rayToViewer) - math::square(_radius);
 
     auto roots = math::solve(a, b, c);
 
@@ -33,9 +33,9 @@ std::optional<RayHit> Sphere::intersect(const Ray &ray)
         return {};
     }
 
-    auto intersection = ray.origin + *t * ray.direction;
+    auto intersection = ray.origin + (*t) * ray.direction;
     auto normal = calculateNormal(intersection);
-    return RayHit{ intersection, normal, shared_from_this(), *t };
+    return RayHit{ intersection, normal, shared_from_this(), (*t) };
 }
 
 glm::vec3 Sphere::calculateNormal(glm::vec3 point) const

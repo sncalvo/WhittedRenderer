@@ -10,7 +10,9 @@
 #include "Ray.hpp"
 #include "Light.hpp"
 
-auto constexpr MAX_DEPTH = 2;
+#include "Log.hpp"
+
+auto constexpr MAX_DEPTH = 1;
 auto constexpr BACKGROUND_COLOR = Pixel{ 0, 0, 0 };
 
 float attenuation(float distance)
@@ -26,7 +28,7 @@ Pixel Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth
     unsigned int nearestIntersectionZ = UINT32_MAX;
     for (auto& solid : solids)
     {
-        if (auto intersection = solid->intersect(*this); intersection.has_value()) // TODO: See if we can get rid of the has_value()
+        if (auto intersection = solid->intersect(*this))
         {
             if (nearestIntersectionZ > intersection->position.z)
             {
@@ -49,12 +51,12 @@ Pixel Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth
 Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth)
 {
     // TODO: Create singleton with list of lights
-    Light light{ glm::vec3(1.f, 0.f, 4.f), glm::vec3(1.f), 1.f, .5f };
-    Light light2{ glm::vec3(-1.f, 0.f, 6.f), glm::vec3(1.f), 1.f, .5f };
+    Light light{ glm::vec3(-1.f, 1.f, 1.f), glm::vec3(1.f), 1.f, .1f };
+    //Light light2{ glm::vec3(-1.f, 0.f, -2.f), glm::vec3(1.f), 1.f, .2f };
 
     std::vector<Light> lights;
     lights.push_back(light);
-    lights.push_back(light2);
+    //lights.push_back(light2);
 
     const Material& material = hit.solid->getMaterial();
 
@@ -72,24 +74,24 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
         // Specular color
         auto reflection = glm::normalize(glm::reflect(directionToLight, hit.normal));
         auto shininess = 64.f; // TODO: See specular factor (pow)
-        auto specular = material.specular * material.specularColor * pow(std::max(glm::dot(-reflection, glm::normalize(origin - hit.position)), 0.f), shininess);
+        auto specular = material.specular * material.specularColor * glm::pow(std::max(glm::dot(-reflection, glm::normalize(origin - hit.position)), 0.f), shininess);
 
-        float s = 1.f;
-        Ray ray{ hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
-        auto intersectionSolids = ray._calculateLightPathIntersections(solids);
-        for (const auto& intersectionSolid : intersectionSolids)
-        {
-            s *= intersectionSolid->getMaterial().transparency;
-            if (s == 0.f)
-            {
-                break;
-            }
-        }
+        auto s = 1.f;
+        // TODO: FIX THIS
+        //Ray ray{ hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
+        //auto intersectionSolids = ray._calculateLightPathIntersections(solids);
+        //for (const auto& intersectionSolid : intersectionSolids)
+        //{
+        //    s *= intersectionSolid->getMaterial().transparency;
+        //    if (s == 0.f)
+        //    {
+        //        break;
+        //    }
+        //}
 
         auto distanceToLight = glm::l2Norm(light.position, hit.position);
         auto lightAttenuation = attenuation(distanceToLight);
-
-        lightColor += s * lightAttenuation * light.intensity * (diffuse + specular);
+        lightColor += s * lightAttenuation / light.decay * light.intensity * (diffuse + specular);
     }
 
     auto ambientAndLight = glm::clamp(
@@ -115,7 +117,7 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
             hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction,
             glm::normalize(reflection)
         };
-        color = color + ray.calculateColor(solids, depth + 1) * material.specular;
+        color += ray.calculateColor(solids, depth + 1) * material.specular;
     }
 
     if (material.transparency > 0)
@@ -135,7 +137,7 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
                 hit.position + 100.f * glm::vec3(glm::epsilon<float>()) * direction,
                 glm::normalize(refractionPerpendicular + refractionParallel)
             };
-            color = color + ray.calculateColor(solids, depth + 1) * material.transparency;
+            color += ray.calculateColor(solids, depth + 1) * material.transparency;
         }
     }
 
@@ -149,7 +151,7 @@ std::vector<std::shared_ptr<Solid>> Ray::_calculateLightPathIntersections(std::v
     {
         if (auto intersection = solid->intersect(*this); intersection.has_value())
         {
-            auto hit = *intersection;
+            auto& hit = *intersection;
             intersections.push_back(hit);
         }
     }
