@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LoadingBar.cpp" />
     <ClCompile Include="src\Ray.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Light.hpp" />
     <ClInclude Include="src\LoadingBar.hpp" />
     <ClInclude Include="src\Pixel.hpp" />
