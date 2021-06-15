@@ -66,9 +66,9 @@ int main(void)
 
     // Camera
     auto vFov = 45.f;
-    auto focalLength = 1.f;
-    auto origin = glm::vec3(0.f);
-    Camera camera(image.aspectRatio(), vFov, focalLength, origin);
+    auto origin = glm::vec3(0.f, 5.f, 0.f);
+    auto lookAt = glm::vec3(0.f, 0.f, 5.f);
+    Camera camera(image.aspectRatio(), vFov, origin, lookAt);
 
     auto start = std::chrono::steady_clock::now();
 
