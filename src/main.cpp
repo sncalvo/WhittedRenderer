@@ -37,7 +37,6 @@ int main(void)
         0.f,
         0.f
     };
-
     Material material2{
         glm::vec3(0.f, 1.f, 0.f),
         glm::vec3(1.f, 1.f, 1.f),
@@ -47,14 +46,29 @@ int main(void)
         2.f
     };
     Material material3{
-        glm::vec3(1.f, 1.f, 1.f),
+        glm::vec3(0.f, 0.f, 1.f),
         glm::vec3(1.f, 1.f, 1.f),
         1.f,
-        1.f,
+        0.f,
         0.f,
         0.f
     };
-
+    Material material4 {
+        glm::vec3(0.f, 1.f, 1.f),
+        glm::vec3(1.f, 1.f, 1.f),
+        1.f,
+        0.f,
+        0.f,
+        0.f
+    };
+    Material material5 {
+        glm::vec3(1.f, 1.f, 1.f),
+        glm::vec3(1.f, 1.f, 1.f),
+        1.f,
+        0.f,
+        0.f,
+        0.f
+    };
     // Solids
     std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(
         glm::vec3(1.5f, 0.f, 9.f),
@@ -68,19 +82,29 @@ int main(void)
         material2
     );
     std::shared_ptr<Plane> plane = std::make_shared<Plane>(
-        glm::vec3(70.f, 0.f, 0.f),
+        glm::vec3(2.f, 0.f, 0.f),
         glm::vec3(-1.f, 0.f, 0.f),
-        material
-    );
-    std::shared_ptr<Plane> plane2 = std::make_shared<Plane>(
-        glm::vec3(-70.f, 0.f, 0.f),
-        glm::vec3(1.f, 0.f, 0.f),
         material2
     );
-    std::shared_ptr<Plane> plane3 = std::make_shared<Plane>(
-        glm::vec3(0.f, 0.f, 20.f),
-        glm::vec3(0.f, 0.f, -1.f),
+    std::shared_ptr<Plane> plane2 = std::make_shared<Plane>(
+        glm::vec3(-2.f, 0.f, 0.f),
+        glm::vec3(1.f, 0.f, 0.f),
         material3
+    );
+    std::shared_ptr<Plane> plane3 = std::make_shared<Plane>(
+        glm::vec3(0.f, 0.f, 6.f),
+        glm::vec3(0.f, 0.f, -1.f),
+        material4
+    );
+    std::shared_ptr<Plane> plane4 = std::make_shared<Plane>(
+        glm::vec3(0.f, 2.f, 0.f),
+        glm::vec3(0.f, -1.f, 0.f),
+        material5
+    );
+    std::shared_ptr<Plane> plane5 = std::make_shared<Plane>(
+        glm::vec3(0.f, -2.f, 0.f),
+        glm::vec3(0.f, 1.f, 0.f),
+        material5
     );
 
     std::vector<std::shared_ptr<Solid>> solids;
@@ -88,7 +112,9 @@ int main(void)
     solids.push_back(std::move(plane));
     solids.push_back(std::move(plane2));
     solids.push_back(std::move(plane3));
-    solids.push_back(std::move(cylinder));
+    solids.push_back(std::move(plane4));
+    solids.push_back(std::move(plane5));
+    //solids.push_back(std::move(cylinder));
 
     // Camera
     auto vFov = 45.f;
