@@ -2,6 +2,22 @@
 
 #include <glm/glm.hpp>
 
+Plane::Plane() :
+	_center(glm::vec3(0.f)),
+	_normal(glm::vec3(1.f)),
+	Solid(
+		Material{
+			glm::vec3(1.f),
+			glm::vec3(1.f),
+			1.f,
+			0.f,
+			0.f,
+			0.f
+		}
+	)
+{
+}
+
 Plane::Plane(glm::vec3 center, glm::vec3 normal, Material material) :
 	_center(center),
 	_normal(normal),
@@ -30,6 +46,16 @@ std::optional<RayHit> Plane::intersect(const Ray& ray)
 }
 
 glm::vec3 Plane::calculateNormal(glm::vec3 point) const
+{
+	return _normal;
+}
+
+glm::vec3 Plane::getCenter() const
+{
+	return _center;
+}
+
+glm::vec3 Plane::getNormal() const
 {
 	return _normal;
 }

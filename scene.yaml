@@ -1,0 +1,110 @@
+width: 1920
+height: 1080
+
+materials:
+  - &white
+    diffuseColor: [1.0, 1.0, 1.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 0.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &shinyWhite
+    diffuseColor: [1.0, 1.0, 1.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 1.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &red
+    diffuseColor: [1.0, 0.0, 0.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 0.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &green
+    diffuseColor: [0.0, 1.0, 0.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 1.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &blue
+    diffuseColor: [0.0, 0.0, 1.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 0.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &black
+    diffuseColor: [0.0, 0.0, 0.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 0.0
+    transparency: 0.0
+    refractionIndex: 0.0
+  - &grey
+    diffuseColor: [0.5, 0.5, 0.5]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 1.0
+    specular: 0.0
+    transparency: 0.0
+    refractionIndex: 0.0
+
+solids:
+  - type: "sphere"
+    center: [1.0, -1.0, 4.0]
+    radius: 0.5
+    material: *shinyWhite
+  - type: "cylinder"
+    center: [0.0, 0.0, 5.0]
+    radius: 1.0
+    height: 2.0
+    material: *green
+  - type: "disc"
+    center: [-2.0, 0.0, 6.0]
+    normal: [0.0, 0.0, 1.0]
+    radius: 2.0
+    material: *white
+  # Right wall
+  - type: "plane"
+    center: [3.0, 0.0, 0.0]
+    normal: [-1.0, 0.0, 0.0]
+    material: *green
+  # Left wall
+  - type: "plane"
+    center: [-3.0, 0.0, 0.0]
+    normal: [1.0, 0.0, 0.0]
+    material: *red
+  # Back wall
+  - type: "plane"
+    center: [0.0, 0.0, 6.0]
+    normal: [0.0, 0.0, -1.0]
+    material: *white
+  # Front wall
+  - type: "plane"
+    center: [0.0, 0.0, -1.0]
+    normal: [0.0, 0.0, 1.0]
+    material: *black
+  # Top wall
+  - type: "plane"
+    center: [0.0, 3.0, 0.0]
+    normal: [0.0, -1.0, 0.0]
+    material: *grey
+  # Bottom wall
+  - type: "plane"
+    center: [0.0, -3.0, 0.0]
+    normal: [0.0, 1.0, 0.0]
+    material: *white
+
+lights:
+  - position: [-1.0, 1.0, 1.0]
+    color: [1.0, 1.0, 1.0]
+    intensity: 1.0
+    decay: 0.1
+
+camera:
+  vFov: 45.0
+  origin: [0.0, 1.0, 0.0]
+  lookAt: [0.0, 1.0, 1.0]

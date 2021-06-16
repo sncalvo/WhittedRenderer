@@ -8,7 +8,10 @@ private:
 	glm::vec3 _center;
 	glm::vec3 _normal;
 public:
+	Plane();
 	Plane(glm::vec3 center, glm::vec3 normal, Material material);
 	std::optional<RayHit> intersect(const Ray& ray) override;
 	glm::vec3 calculateNormal(glm::vec3 point) const override;
+	glm::vec3 getCenter() const;
+	glm::vec3 getNormal() const;
 };

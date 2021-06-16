@@ -2,6 +2,22 @@
 
 #include "../math.hpp"
 
+Sphere::Sphere() :
+    _center(glm::vec3(0.f)),
+    _radius(1.f),
+    Solid(
+        Material{
+            glm::vec3(1.f),
+            glm::vec3(1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        }
+    )
+{
+}
+
 Sphere::Sphere(glm::vec3 center, float radius, Material material) : _center(center), _radius(radius), Solid(material)
 {
 }
@@ -42,4 +58,14 @@ std::optional<RayHit> Sphere::intersect(const Ray &ray)
 glm::vec3 Sphere::calculateNormal(glm::vec3 point) const
 {
     return glm::normalize(point - _center);
+}
+
+glm::vec3 Sphere::getCenter() const
+{
+    return _center;
+}
+
+float Sphere::getRadius() const
+{
+    return _radius;
 }
