@@ -72,22 +72,27 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
         auto diffuse = material.diffuse * material.diffuseColor * std::max(glm::dot(hit.normal, directionToLight), 0.f);
 
         // Specular color
-        auto reflection = glm::normalize(glm::reflect(directionToLight, hit.normal));
+        auto reflection = -glm::normalize(glm::reflect(directionToLight, hit.normal));
         auto shininess = 64.f; // TODO: See specular factor (pow)
-        auto specular = material.specular * material.specularColor * glm::pow(std::max(glm::dot(-reflection, glm::normalize(origin - hit.position)), 0.f), shininess);
+        auto specular = material.specular * material.specularColor * glm::pow(
+            std::max(
+                glm::dot(reflection, glm::normalize(origin - hit.position)),
+                0.f
+            ),
+            shininess
+        );
 
         auto s = 1.f;
-        // TODO: FIX THIS
-        //Ray ray{ hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
-        //auto intersectionSolids = ray._calculateLightPathIntersections(solids);
-        //for (const auto& intersectionSolid : intersectionSolids)
-        //{
-        //    s *= intersectionSolid->getMaterial().transparency;
-        //    if (s == 0.f)
-        //    {
-        //        break;
-        //    }
-        //}
+        Ray ray{ hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
+        auto intersectionSolids = ray._calculateLightPathIntersections(solids);
+        for (const auto& intersectionSolid : intersectionSolids)
+        {
+            s *= intersectionSolid->getMaterial().transparency;
+            if (s == 0.f)
+            {
+                break;
+            }
+        }
 
         auto distanceToLight = glm::l2Norm(light.position, hit.position);
         auto lightAttenuation = attenuation(distanceToLight);
@@ -105,17 +110,17 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
         (unsigned char) (ambientAndLight.z * 255.f)
     };
 
-    if (!(depth < MAX_DEPTH))
+    if (depth >= MAX_DEPTH)
     {
         return color;
     }
 
     if (material.specular > 0)
     {
-        auto reflection = glm::reflect(direction, hit.normal);
+        auto reflection = glm::normalize(glm::reflect(direction, hit.normal));
         Ray ray{
-            hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction,
-            glm::normalize(reflection)
+            hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
+            reflection
         };
         color += ray.calculateColor(solids, depth + 1) * material.specular;
     }

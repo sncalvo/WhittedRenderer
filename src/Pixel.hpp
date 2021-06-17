@@ -15,9 +15,9 @@ struct Pixel
 
     Pixel& operator+=(const Pixel& other)
     {
-        r += other.r;
-        g += other.g;
-        b += other.b;
+        r = (unsigned char)(std::min(r + other.r, 255));
+        g = (unsigned char)(std::min(g + other.g, 255));
+        b = (unsigned char)(std::min(b + other.b, 255));
 
         return *this;
     }
