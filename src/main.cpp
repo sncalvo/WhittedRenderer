@@ -4,14 +4,15 @@
 #include <chrono>
 #include <ctime>
 
-#include <random>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/norm.hpp>
 
+#include "Camera.hpp"
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
 #include "LoadingBar.hpp"
+
 #include "windows.h"
 
 constexpr auto SAMPLES = 4;
@@ -64,18 +65,9 @@ int main(void)
 
     // Camera
     auto vFov = 45.f;
-    auto theta = glm::radians(vFov);
-    auto h = glm::tan(theta / 2);
-
-    auto viewportHeight = 2.0 * h;
-    auto viewportWidth = image.aspectRatio() * viewportHeight;
-
-    auto focalLength = 1.f;
-
-    auto origin = glm::vec3(0.f);
-    auto horizontal = glm::vec3(viewportWidth, 0.f, 0.f);
-    auto vertical = glm::vec3(0.f, viewportHeight, 0.f);
-    auto lowerLeftCorner = origin + glm::vec3(0.f, 0.f, focalLength) - horizontal / 2.f - vertical / 2.f;
+    auto origin = glm::vec3(0.f, 5.f, 0.f);
+    auto lookAt = glm::vec3(0.f, 0.f, 5.f);
+    Camera camera(image.aspectRatio(), vFov, origin, lookAt);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -89,12 +81,10 @@ int main(void)
 
             for (auto sample = 0; sample < SAMPLES; ++sample)
             {
-                float nearestIntersection = UINT32_MAX;
-
                 float u = (column + glm::linearRand(0.0, 1.0)) / (image.getWidth() - 1);
                 float v = (row + glm::linearRand(0.0, 1.0)) / (image.getHeight() - 1);
 
-                Ray ray{ origin, glm::normalize(lowerLeftCorner + u * horizontal + v * vertical - origin) };
+                auto ray = camera.createRay(u, v);
 
                 color += ray.calculateColor(solids, 0);
                 if (glm::l2Norm(color) > glm::l2Norm(maxColor))
@@ -122,7 +112,7 @@ int main(void)
 
     image.write(fileNameStr.c_str(), maxColor, SAMPLES);
 
-    std::cout << std::endl <<"Image saved at " << fileNameStr << std::endl;
+    std::cout << std::endl << "Image saved at " << fileNameStr << std::endl;
     std::cout << "Opening " << fileNameStr << std::endl;
     ShellExecute(0, 0, std::wstring(fileNameStr.begin(), fileNameStr.end()).c_str(), 0, 0, SW_SHOW);
 }
