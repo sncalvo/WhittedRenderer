@@ -4,7 +4,6 @@
 #include <chrono>
 #include <ctime>
 
-#include <random>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/norm.hpp>
 
@@ -13,8 +12,8 @@
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
 #include "LoadingBar.hpp"
+
 #include "windows.h"
-#include "Log.hpp"
 
 constexpr auto SAMPLES = 4;
 
@@ -113,7 +112,7 @@ int main(void)
 
     image.write(fileNameStr.c_str(), maxColor, SAMPLES);
 
-    std::cout << std::endl <<"Image saved at " << fileNameStr << std::endl;
+    std::cout << std::endl << "Image saved at " << fileNameStr << std::endl;
     std::cout << "Opening " << fileNameStr << std::endl;
     ShellExecute(0, 0, std::wstring(fileNameStr.begin(), fileNameStr.end()).c_str(), 0, 0, SW_SHOW);
 }

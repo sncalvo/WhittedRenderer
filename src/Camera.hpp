@@ -22,5 +22,10 @@ public:
 
     Ray createRay(float u, float v);
 
-    Camera(float aspectRatio, float fov, glm::vec3 origin = glm::vec3(0.f), glm::vec3 lookAt = glm::vec3(0.f, 0.f, 1.f));
+    Camera(
+        float aspectRatio,
+        float fov,
+        glm::vec3 origin = glm::vec3(0.f),
+        glm::vec3 lookAt = glm::vec3(0.f, 0.f, 1.f)
+    );
 };
