@@ -14,15 +14,17 @@
 #include "Log.hpp"
 
 auto constexpr MAX_DEPTH = 2;
-auto constexpr BACKGROUND_COLOR = Pixel{ 0, 0, 0 };
+auto constexpr BACKGROUND_COLOR = glm::vec3(0.f);
 
 float attenuation(float distance)
 {
     return 1.f / glm::pow(distance, 2.f);
 }
 
-Pixel Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth)
+glm::vec3 Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth)
 {
+    /* Returns color in not normalized format */
+
     // TODO: Move to another function
     std::optional<RayHit> hit;
     // TODO: Use t of parametric line to be able to move camera
@@ -50,7 +52,7 @@ Pixel Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth
     }
 }
 
-Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth)
+glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth)
 {
     // TODO: Create singleton with list of lights
     Light light{ glm::vec3(-1.f, 1.f, 1.f), glm::vec3(1.f), 1.f, .1f };
@@ -85,7 +87,7 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
         );
 
         auto s = 1.f;
-        Ray ray{ hit.position - 100.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
+        Ray ray{ hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
         auto intersectionSolids = ray._calculateLightPathIntersections(solids);
         for (const auto& intersectionSolid : intersectionSolids)
         {
@@ -101,16 +103,7 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
         lightColor += s * lightAttenuation / light.decay * light.intensity * (diffuse + specular);
     }
 
-    auto ambientAndLight = glm::clamp(
-        ambientColor + lightColor,
-        glm::vec3(0.f),
-        glm::vec3(1.f)
-    );
-    auto color = Pixel{
-        (unsigned char) (ambientAndLight.x * 255.f),
-        (unsigned char) (ambientAndLight.y * 255.f),
-        (unsigned char) (ambientAndLight.z * 255.f)
-    };
+    auto color = ambientColor + lightColor;
 
     if (depth >= MAX_DEPTH)
     {

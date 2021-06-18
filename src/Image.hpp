@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <glm/glm.hpp>
+
 #include "Pixel.hpp"
 
 class Image
@@ -12,7 +14,10 @@ private:
     static const auto WIDTH = 1920;
 
     unsigned int _height, _width;
-    std::unique_ptr<Pixel[]> _buffer;
+    std::unique_ptr<glm::vec3[]> _colorBuffer;
+    std::unique_ptr<Pixel[]> _pixelBuffer;
+
+    void _performGammaCorrection(glm::vec3 maxValue);
 
 public:
     Image(unsigned int width = WIDTH, unsigned int height = HEIGHT);
@@ -21,9 +26,9 @@ public:
 
     unsigned int getHeight();
 
-    void write(const char* fileName);
+    void write(const char* fileName, glm::vec3 maxColor);
 
-    Pixel& operator[](std::size_t index) const;
+    glm::vec3& operator[](std::size_t index) const;
 
     float aspectRatio() const;
 };
