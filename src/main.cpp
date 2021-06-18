@@ -20,12 +20,6 @@ constexpr auto SAMPLES = 4;
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
 
-inline double random_double() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
-}
-
 int main(void)
 {
     int width = 1366;
