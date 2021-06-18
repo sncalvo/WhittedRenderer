@@ -4,6 +4,7 @@
 #include <chrono>
 #include <ctime>
 
+#include <random>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/norm.hpp>
 
@@ -13,12 +14,17 @@
 #include "LoadingBar.hpp"
 #include "windows.h"
 
-constexpr auto SAMPLES = 1;
+constexpr auto SAMPLES = 4;
 
 // TODO: Use
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
 
+inline double random_double() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
 
 int main(void)
 {
@@ -91,15 +97,8 @@ int main(void)
             {
                 float nearestIntersection = UINT32_MAX;
 
-                float randomU = 0.f;
-                float randomV = 0.f;
-                if (SAMPLES > 1) {
-                    randomU = glm::gaussRand(0.f, 1.f);
-                    randomV = glm::gaussRand(0.f, 1.f);
-                }
-
-                float u = (column + randomU) / (image.getWidth() - 1);
-                float v = (row + randomV) / (image.getHeight() - 1);
+                float u = (column + glm::linearRand(0.0, 1.0)) / (image.getWidth() - 1);
+                float v = (row + glm::linearRand(0.0, 1.0)) / (image.getHeight() - 1);
 
                 Ray ray{ origin, glm::normalize(lowerLeftCorner + u * horizontal + v * vertical - origin) };
 
@@ -127,7 +126,7 @@ int main(void)
     std::cout << "Saving...";
     auto fileNameStr = fileName.str();
 
-    image.write(fileNameStr.c_str(), maxColor);
+    image.write(fileNameStr.c_str(), maxColor, SAMPLES);
 
     std::cout << std::endl <<"Image saved at " << fileNameStr << std::endl;
     std::cout << "Opening " << fileNameStr << std::endl;

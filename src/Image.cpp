@@ -23,9 +23,9 @@ unsigned int Image::getHeight()
     return _height;
 }
 
-void Image::write(const char* fileName, glm::vec3 maxColor)
+void Image::write(const char* fileName, glm::vec3 maxColor, unsigned int samplesPerPixel)
 {
-    _performGammaCorrection(maxColor);
+    _performGammaCorrection(maxColor, samplesPerPixel);
     stbi_write_png(fileName, _width, _height, CHANNELS, _pixelBuffer.get(), CHANNELS * _width);
 }
 
@@ -36,13 +36,14 @@ float Image::aspectRatio() const
     return (float)_width / (float)_height;
 }
 
-void Image::_performGammaCorrection(glm::vec3 maxValue)
+void Image::_performGammaCorrection(glm::vec3 maxValue, unsigned int samplesPerPixel)
 {
     auto maxNorm = glm::l2Norm(maxValue);
 
     for (unsigned int colorIndex = 0; colorIndex < getWidth() * getHeight(); colorIndex++)
     {
         glm::vec3 currentColor = _colorBuffer[colorIndex];
+        currentColor /= samplesPerPixel;
         currentColor /= maxNorm;
         currentColor = glm::sqrt(currentColor);
         _pixelBuffer[colorIndex] = Pixel{

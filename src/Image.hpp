@@ -17,7 +17,7 @@ private:
     std::unique_ptr<glm::vec3[]> _colorBuffer;
     std::unique_ptr<Pixel[]> _pixelBuffer;
 
-    void _performGammaCorrection(glm::vec3 maxValue);
+    void _performGammaCorrection(glm::vec3 maxValue, unsigned int samplesPerPixel);
 
 public:
     Image(unsigned int width = WIDTH, unsigned int height = HEIGHT);
@@ -26,7 +26,7 @@ public:
 
     unsigned int getHeight();
 
-    void write(const char* fileName, glm::vec3 maxColor);
+    void write(const char* fileName, glm::vec3 maxColor, unsigned int samplesPerPixel);
 
     glm::vec3& operator[](std::size_t index) const;
 
