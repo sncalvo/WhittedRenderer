@@ -50,7 +50,8 @@ std::optional<RayHit> Cylinder::intersect(const Ray &ray)
     auto visibleIntersection = ray.origin + *t * ray.direction;
 
     auto normal = calculateNormal(visibleIntersection);
-    return RayHit{ visibleIntersection, normal, shared_from_this(), *t };
+    auto isFrontFace = glm::dot(ray.direction, normal) < 0.f;
+    return RayHit{ visibleIntersection, normal, shared_from_this(), *t, isFrontFace };
 }
 
 glm::vec3 Cylinder::calculateNormal(glm::vec3 point) const

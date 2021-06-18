@@ -9,10 +9,11 @@
 #include "Solids/Solid.hpp"
 #include "Ray.hpp"
 #include "Light.hpp"
+#include "math.hpp"
 
 #include "Log.hpp"
 
-auto constexpr MAX_DEPTH = 1;
+auto constexpr MAX_DEPTH = 2;
 auto constexpr BACKGROUND_COLOR = Pixel{ 0, 0, 0 };
 
 float attenuation(float distance)
@@ -25,6 +26,7 @@ Pixel Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth
     // TODO: Move to another function
     std::optional<RayHit> hit;
     // TODO: Use t of parametric line to be able to move camera
+
     unsigned int nearestIntersectionZ = UINT32_MAX;
     for (auto& solid : solids)
     {
@@ -127,20 +129,21 @@ Pixel Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &soli
 
     if (material.transparency > 0)
     {
-        auto isCriticalAngle = false;
-        auto cosTheta = std::min(glm::dot(-direction, hit.normal), 1.f);
-        auto sinTheta = std::sqrt(1.f - cosTheta * cosTheta);
-        auto refractionRatio = (1.f / material.refractionIndex);
-        if (!(refractionRatio * sinTheta > 1.f))
+        auto normalPointingToRay = hit.isFrontFace ? hit.normal : -hit.normal;
+        auto cosTheta = std::min(glm::dot(-direction, normalPointingToRay), 1.f);
+        auto sinTheta = std::sqrt(1.f - math::square(cosTheta));
+        auto refractionRatio = hit.isFrontFace ? (1.f / material.refractionIndex) : material.refractionIndex;
+        if (refractionRatio * sinTheta <= 1.f)
         {
-            auto refractionPerpendicular = (1.f / 2.f) *
-                (direction + cosTheta * hit.normal);
+            auto refractionPerpendicular = refractionRatio *
+                (direction + cosTheta * normalPointingToRay);
             auto refractionParallel = -glm::sqrt(
                 std::abs(1.f - glm::dot(refractionPerpendicular, refractionPerpendicular))
-            ) * hit.normal;
+            ) * normalPointingToRay;
+            auto refractionDirection = refractionPerpendicular + refractionParallel;
             Ray ray{
-                hit.position + 100.f * glm::vec3(glm::epsilon<float>()) * direction,
-                glm::normalize(refractionPerpendicular + refractionParallel)
+                hit.position + 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
+                refractionDirection
             };
             color += ray.calculateColor(solids, depth + 1) * material.transparency;
         }
