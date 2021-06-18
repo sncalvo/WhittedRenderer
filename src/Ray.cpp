@@ -25,26 +25,11 @@ glm::vec3 Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int d
 {
     /* Returns color in not normalized format */
 
-    // TODO: Move to another function
-    std::optional<RayHit> hit;
-    // TODO: Use t of parametric line to be able to move camera
+    std::vector<RayHit> hits = _calculatePathIntersections(solids);
 
-    unsigned int nearestIntersectionZ = UINT32_MAX;
-    for (auto& solid : solids)
+    if (hits.size() > 0)
     {
-        if (auto intersection = solid->intersect(*this))
-        {
-            if (nearestIntersectionZ > intersection->position.z)
-            {
-                nearestIntersectionZ = intersection->position.z;
-                hit = intersection;
-            }
-        }
-    }
-
-    if (hit.has_value())
-    {
-        return _calculateColor(*hit, solids, depth);
+        return _calculateColor(hits[0], solids, depth);
     }
     else
     {
@@ -88,10 +73,10 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
 
         auto s = 1.f;
         Ray ray{ hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
-        auto intersectionSolids = ray._calculateLightPathIntersections(solids);
-        for (const auto& intersectionSolid : intersectionSolids)
+        auto intersectionInLightsPath = ray._calculatePathIntersections(solids);
+        for (const auto& intersection : intersectionInLightsPath)
         {
-            s *= intersectionSolid->getMaterial().transparency;
+            s *= intersection.solid->getMaterial().transparency;
             if (s == 0.f)
             {
                 break;
@@ -145,27 +130,19 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
     return color;
 }
 
-std::vector<std::shared_ptr<Solid>> Ray::_calculateLightPathIntersections(std::vector<std::shared_ptr<Solid>> &solids) const
+std::vector<RayHit> Ray::_calculatePathIntersections(std::vector<std::shared_ptr<Solid>> &solids) const
 {
+    /* Returns vector of hits sorted in ascending distance to ray.origin */
+
     std::vector<RayHit> intersections;
     for (const auto& solid : solids)
     {
-        if (auto intersection = solid->intersect(*this); intersection.has_value())
+        if (auto intersection = solid->intersect(*this))
         {
             auto& hit = *intersection;
             intersections.push_back(hit);
         }
     }
-    std::vector<std::shared_ptr<Solid>> intersectionSolids;
     std::sort(intersections.begin(), intersections.end());
-    std::transform(
-        intersections.begin(),
-        intersections.end(),
-        std::back_inserter(intersectionSolids),
-        [](RayHit hit) -> std::shared_ptr<Solid>
-        {
-            return hit.solid;
-        }
-    );
-    return intersectionSolids;
+    return intersections;
 }
