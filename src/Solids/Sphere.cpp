@@ -35,7 +35,8 @@ std::optional<RayHit> Sphere::intersect(const Ray &ray)
 
     auto intersection = ray.origin + (*t) * ray.direction;
     auto normal = calculateNormal(intersection);
-    return RayHit{ intersection, normal, shared_from_this(), (*t) };
+    auto isFrontFace = glm::dot(ray.direction, normal) < 0.f;
+    return RayHit{ intersection, normal, shared_from_this(), (*t), isFrontFace };
 }
 
 glm::vec3 Sphere::calculateNormal(glm::vec3 point) const

@@ -25,7 +25,8 @@ std::optional<RayHit> Disc::intersect(const Ray &ray)
         if (pointInCircle)
         {
             auto normal = calculateNormal(intersectionPoint);
-            return RayHit{ glm::vec3{0.f}, normal, shared_from_this(), t };
+            auto isFrontFace = glm::dot(ray.direction, normal) < 0.f;
+            return RayHit{ glm::vec3{0.f}, normal, shared_from_this(), t, isFrontFace };
         }
         else
         {

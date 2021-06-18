@@ -14,6 +14,7 @@ struct RayHit
     glm::vec3 position, normal;
     std::shared_ptr<Solid> solid;
     float t = 0.f; // t of ray's parametric line
+    bool isFrontFace;
 
     bool operator<(const RayHit& other)
     {
