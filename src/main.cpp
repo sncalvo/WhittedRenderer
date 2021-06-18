@@ -3,7 +3,10 @@
 #include <sstream>
 #include <chrono>
 #include <ctime>
+
+#include <random>
 #include <glm/gtc/random.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
@@ -11,12 +14,11 @@
 #include "LoadingBar.hpp"
 #include "windows.h"
 
-constexpr auto SAMPLES = 1;
+constexpr auto SAMPLES = 4;
 
 // TODO: Use
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
-
 
 int main(void)
 {
@@ -38,19 +40,19 @@ int main(void)
         glm::vec3(0.f, 1.f, 0.f),
         glm::vec3(1.f, 1.f, 1.f),
         1.f,
+        .0f,
         1.f,
-        0.f,
-        0.f
+        2.f
     };
 
     // Solids
     std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(
-        glm::vec3(0.f, 0.f, 5.f),
+        glm::vec3(1.5f, 0.f, 9.f),
         1.f,
         material
     );
     std::shared_ptr<Cylinder> cylinder = std::make_shared<Cylinder>(
-        glm::vec3(2.f, -2.f, 3.f),
+        glm::vec3(0.f, 0.f, 5.f),
         1.f,
         2.f,
         material2
@@ -77,33 +79,31 @@ int main(void)
 
     auto start = std::chrono::steady_clock::now();
 
+    auto maxColor = glm::vec3(0.f);
     for (auto row = image.getHeight(); row > 0; --row)
     {
         for (auto column = 0; column < image.getWidth(); ++column)
         {
-            Pixel pixel{0x00, 0x00, 0x00};
+            auto color = glm::vec3(0.f);
             auto rowIndex = (image.getHeight() - row);
 
             for (auto sample = 0; sample < SAMPLES; ++sample)
             {
                 float nearestIntersection = UINT32_MAX;
 
-                float randomU = 0.f;
-                float randomV = 0.f;
-                if (SAMPLES > 1) {
-                    randomU = glm::gaussRand(0.f, 1.f);
-                    randomV = glm::gaussRand(0.f, 1.f);
-                }
-
-                float u = (column + randomU) / (image.getWidth() - 1);
-                float v = (row + randomV) / (image.getHeight() - 1);
+                float u = (column + glm::linearRand(0.0, 1.0)) / (image.getWidth() - 1);
+                float v = (row + glm::linearRand(0.0, 1.0)) / (image.getHeight() - 1);
 
                 Ray ray{ origin, glm::normalize(lowerLeftCorner + u * horizontal + v * vertical - origin) };
 
-                pixel += ray.calculateColor(solids, 0) / SAMPLES;
+                color += ray.calculateColor(solids, 0);
+                if (glm::l2Norm(color) > glm::l2Norm(maxColor))
+                {
+                    maxColor = color;
+                }
             }
 
-            image[rowIndex * image.getWidth() + column] = pixel;
+            image[rowIndex * image.getWidth() + column] = color;
         }
         loading.incrementProgress(1);
         loading.draw("Rendering");
@@ -112,7 +112,6 @@ int main(void)
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-
     auto now = time(nullptr);
 
     std::stringstream fileName;
@@ -120,7 +119,9 @@ int main(void)
     std::cout << std::endl << "Ray tracing took " << duration / 1000.0 << " seconds" << std::endl;
     std::cout << "Saving...";
     auto fileNameStr = fileName.str();
-    image.write(fileNameStr.c_str());
+
+    image.write(fileNameStr.c_str(), maxColor, SAMPLES);
+
     std::cout << std::endl <<"Image saved at " << fileNameStr << std::endl;
     std::cout << "Opening " << fileNameStr << std::endl;
     ShellExecute(0, 0, std::wstring(fileNameStr.begin(), fileNameStr.end()).c_str(), 0, 0, SW_SHOW);

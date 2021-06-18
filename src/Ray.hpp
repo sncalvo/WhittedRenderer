@@ -25,8 +25,8 @@ struct RayHit
 struct Ray
 {
     glm::vec3 origin, direction;
-    Pixel calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth);
+    glm::vec3 calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth);
 private:
-    Pixel _calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth);
+    glm::vec3 _calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth);
     std::vector<std::shared_ptr<Solid>> _calculateLightPathIntersections(std::vector<std::shared_ptr<Solid>> &solids) const;
 };
