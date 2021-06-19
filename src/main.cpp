@@ -17,7 +17,7 @@
 #include "windows.h"
 #include "Solids/Plane.hpp"
 
-constexpr auto SAMPLES = 4;
+constexpr auto SAMPLES = 1;
 
 // TODO: Use
 constexpr auto THREADS = 8;
@@ -25,101 +25,120 @@ constexpr auto THREAD_LOAD = 10;
 
 int main(void)
 {
-    int width = 1366;
-    int height = 768;
+    int width = 640;
+    int height = 360;
     LoadingBar loading("Render started", height);
     Image image(width, height);
+    Image reflectionImage(width, height);
+    Image transparencyImage(width, height);
 
-    Material material{
-        glm::vec3(1.f, 0.f, 0.f),
-        glm::vec3(1.f, 1.f, 1.f),
-        1.f,
-        1.f,
-        0.f,
-        0.f
-    };
-    Material material2{
-        glm::vec3(0.f, 1.f, 0.f),
-        glm::vec3(1.f, 1.f, 1.f),
-        1.f,
-        .0f,
-        1.f,
-        2.f
-    };
-    Material material3{
-        glm::vec3(0.f, 0.f, 1.f),
-        glm::vec3(1.f, 1.f, 1.f),
+    Material white(
+        glm::vec3(1.f),
+        glm::vec3(1.f),
         1.f,
         0.f,
         0.f,
         0.f
-    };
-    Material material4 {
-        glm::vec3(0.f, 1.f, 1.f),
-        glm::vec3(1.f, 1.f, 1.f),
-        1.f,
-        0.f,
-        0.f,
-        0.f
-    };
-    Material material5 {
-        glm::vec3(1.f, 1.f, 1.f),
-        glm::vec3(1.f, 1.f, 1.f),
-        1.f,
-        0.f,
-        0.f,
-        0.f
-    };
+    );
+
     // Solids
     std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(
-        glm::vec3(1.5f, 0.f, 9.f),
-        1.f,
-        material
+        glm::vec3(1.f, -1.f, 4.f),
+        .5f,
+        Material(
+            glm::vec3(1.f),
+            glm::vec3(1.f),
+            1.f,
+            1.f,
+            0.f,
+            0.f
+        )
     );
     std::shared_ptr<Cylinder> cylinder = std::make_shared<Cylinder>(
         glm::vec3(0.f, 0.f, 5.f),
         1.f,
         2.f,
-        material2
+        Material(
+            glm::vec3(0.f, 1.f, 0.f),
+            glm::vec3(1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        )
     );
-    std::shared_ptr<Plane> plane = std::make_shared<Plane>(
+    std::shared_ptr<Plane> rightWall = std::make_shared<Plane>(
         glm::vec3(2.f, 0.f, 0.f),
         glm::vec3(-1.f, 0.f, 0.f),
-        material2
+        Material(
+            glm::vec3(0.f, 1.f, 0.f),
+            glm::vec3(1.f, 1.f, 1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        )
     );
-    std::shared_ptr<Plane> plane2 = std::make_shared<Plane>(
+    std::shared_ptr<Plane> leftWall = std::make_shared<Plane>(
         glm::vec3(-2.f, 0.f, 0.f),
         glm::vec3(1.f, 0.f, 0.f),
-        material3
+        Material(
+            glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(1.f, 1.f, 1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        )
     );
-    std::shared_ptr<Plane> plane3 = std::make_shared<Plane>(
+    std::shared_ptr<Plane> frontWall = std::make_shared<Plane>(
         glm::vec3(0.f, 0.f, 6.f),
         glm::vec3(0.f, 0.f, -1.f),
-        material4
+        white
     );
-    std::shared_ptr<Plane> plane4 = std::make_shared<Plane>(
+    std::shared_ptr<Plane> backWall = std::make_shared<Plane>(
+        glm::vec3(0.f, 0.f, -1.f),
+        glm::vec3(0.f, 0.f, 1.f),
+        Material(
+            glm::vec3(0.f),
+            glm::vec3(1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        )
+    );
+    std::shared_ptr<Plane> topWall = std::make_shared<Plane>(
         glm::vec3(0.f, 2.f, 0.f),
         glm::vec3(0.f, -1.f, 0.f),
-        material5
+        Material(
+            glm::vec3(0.5f),
+            glm::vec3(1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        )
     );
-    std::shared_ptr<Plane> plane5 = std::make_shared<Plane>(
+    std::shared_ptr<Plane> bottomWall = std::make_shared<Plane>(
         glm::vec3(0.f, -2.f, 0.f),
         glm::vec3(0.f, 1.f, 0.f),
-        material5
+        white
     );
 
     std::vector<std::shared_ptr<Solid>> solids;
     solids.push_back(std::move(sphere));
-    solids.push_back(std::move(plane));
-    solids.push_back(std::move(plane2));
-    solids.push_back(std::move(plane3));
-    solids.push_back(std::move(plane4));
-    solids.push_back(std::move(plane5));
+    solids.push_back(std::move(rightWall));
+    solids.push_back(std::move(leftWall));
+    solids.push_back(std::move(frontWall));
+    solids.push_back(std::move(backWall));
+    solids.push_back(std::move(topWall));
+    solids.push_back(std::move(bottomWall));
     //solids.push_back(std::move(cylinder));
 
     // Camera
     auto vFov = 45.f;
-    auto origin = glm::vec3(0.f, 5.f, 0.f);
+    auto origin = glm::vec3(0.f, 0.f, 0.f);
     auto lookAt = glm::vec3(0.f, 0.f, 5.f);
     Camera camera(image.aspectRatio(), vFov, origin, lookAt);
 
@@ -131,6 +150,7 @@ int main(void)
         for (auto column = 0; column < image.getWidth(); ++column)
         {
             auto color = glm::vec3(0.f);
+            auto material = Material();
             auto rowIndex = (image.getHeight() - row);
 
             for (auto sample = 0; sample < SAMPLES; ++sample)
@@ -140,14 +160,20 @@ int main(void)
 
                 auto ray = camera.createRay(u, v);
 
-                color += ray.calculateColor(solids, 0);
+                std::tie(color, material) = ray.calculateColorAndMaterial(solids, 0);
                 if (glm::l2Norm(color) > glm::l2Norm(maxColor))
                 {
                     maxColor = color;
                 }
             }
 
-            image[rowIndex * image.getWidth() + column] = color;
+            auto reflectionColor = glm::vec3(material.specular);
+            auto transparencyColor = glm::vec3(material.transparency);
+
+            reflectionImage[(size_t)rowIndex * image.getWidth() + column] = reflectionColor;
+            transparencyImage[(size_t)rowIndex * image.getWidth() + column] = transparencyColor;
+
+            image[(size_t) rowIndex * image.getWidth() + column] = color;
         }
         loading.incrementProgress(1);
         loading.draw("Rendering");
@@ -155,16 +181,25 @@ int main(void)
 
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    
+    std::cout << std::endl << "Ray tracing took " << duration / 1000.0 << " seconds" << std::endl;
+    std::cout << "Saving...";
 
     auto now = time(nullptr);
 
     std::stringstream fileName;
     fileName << "images\\test-" << now << ".png";
-    std::cout << std::endl << "Ray tracing took " << duration / 1000.0 << " seconds" << std::endl;
-    std::cout << "Saving...";
     auto fileNameStr = fileName.str();
 
+    std::stringstream reflectionFileName, transparencyFileName;
+    reflectionFileName << "images\\test-" << now << "-reflection.png";
+    transparencyFileName << "images\\test-" << now << "-transparency.png";
+    auto reflectionFileNameStr = reflectionFileName.str();
+    auto transparencyFileNameStr = transparencyFileName.str();
+
     image.write(fileNameStr.c_str(), maxColor, SAMPLES);
+    reflectionImage.write(reflectionFileNameStr.c_str(), glm::vec3(1.f), 1);
+    transparencyImage.write(transparencyFileNameStr.c_str(), glm::vec3(1.f), 1);
 
     std::cout << std::endl << "Image saved at " << fileNameStr << std::endl;
     std::cout << "Opening " << fileNameStr << std::endl;

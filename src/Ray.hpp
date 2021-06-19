@@ -8,6 +8,7 @@
 #include "Pixel.hpp"
 
 class Solid;
+class Material;
 
 struct RayHit
 {
@@ -25,7 +26,7 @@ struct RayHit
 struct Ray
 {
     glm::vec3 origin, direction;
-    glm::vec3 calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth);
+    std::tuple<glm::vec3, Material> calculateColorAndMaterial(std::vector<std::shared_ptr<Solid>> &solids, int depth);
 private:
     glm::vec3 _calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth);
     std::vector<RayHit> _calculatePathIntersections(std::vector<std::shared_ptr<Solid>> &solids) const;

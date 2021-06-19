@@ -21,7 +21,7 @@ float attenuation(float distance)
     return 1.f / glm::pow(distance, 2.f);
 }
 
-glm::vec3 Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int depth)
+std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::shared_ptr<Solid>> &solids, int depth)
 {
     /* Returns color in not normalized format */
 
@@ -29,19 +29,19 @@ glm::vec3 Ray::calculateColor(std::vector<std::shared_ptr<Solid>> &solids, int d
 
     if (hits.size() > 0)
     {
-        return _calculateColor(hits[0], solids, depth);
+        return std::tuple(_calculateColor(hits[0], solids, depth), hits[0].solid->getMaterial());
     }
     else
     {
-        return BACKGROUND_COLOR;
+        return std::tuple(BACKGROUND_COLOR, Material());
     }
 }
 
 glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth)
 {
     // TODO: Create singleton with list of lights
-    Light light{ glm::vec3(-1.f, 1.f, 1.f), glm::vec3(1.f), 1.f, .1f };
-    //Light light2{ glm::vec3(-1.f, 0.f, -2.f), glm::vec3(1.f), 1.f, .2f };
+    Light light{ glm::vec3(0.f, 0.f, 4.f), glm::vec3(1.f), 1.f, .1f };
+    //Light light2{ glm::vec3(0.f, 1.f, 5.f), glm::vec3(1.f), 1.f, .1f };
 
     std::vector<Light> lights;
     lights.push_back(light);
@@ -63,7 +63,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         // Specular color
         auto reflection = -glm::normalize(glm::reflect(directionToLight, hit.normal));
         auto shininess = 64.f; // TODO: See specular factor (pow)
-        auto specular = material.specular * material.specularColor * glm::pow(
+        auto specular = 0.f * material.specular * material.specularColor * glm::pow(
             std::max(
                 glm::dot(reflection, glm::normalize(origin - hit.position)),
                 0.f
@@ -102,7 +102,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
             hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
             reflection
         };
-        color += ray.calculateColor(solids, depth + 1) * material.specular;
+        color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1)) * material.specular;
     }
 
     if (material.transparency > 0)
@@ -123,7 +123,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
                 hit.position + 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
                 refractionDirection
             };
-            color += ray.calculateColor(solids, depth + 1) * material.transparency;
+            color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1)) * material.transparency;
         }
     }
 
