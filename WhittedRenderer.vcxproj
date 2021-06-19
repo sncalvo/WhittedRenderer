@@ -157,6 +157,7 @@
     <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\Solids\Disc.cpp" />
     <ClCompile Include="src\Solids\Cylinder.cpp" />
+    <ClCompile Include="src\Solids\Plane.cpp" />
     <ClCompile Include="src\Solids\Sphere.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="src\Solids\Cylinder.hpp" />
     <ClInclude Include="src\Ray.hpp" />
     <ClInclude Include="src\math.hpp" />
+    <ClInclude Include="src\Solids\Plane.hpp" />
     <ClInclude Include="src\Solids\Solid.hpp" />
     <ClInclude Include="src\Solids\Sphere.hpp" />
     <ClInclude Include="src\Image.hpp" />
