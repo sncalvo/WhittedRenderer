@@ -1,5 +1,7 @@
 #include "Plane.hpp"
 
+#include <glm/glm.hpp>
+
 Plane::Plane(glm::vec3 center, glm::vec3 normal, Material material) :
 	_center(center),
 	_normal(normal),
@@ -18,7 +20,8 @@ std::optional<RayHit> Plane::intersect(const Ray& ray)
 	auto intersection = ray.origin + t * ray.direction;
 	if (t > 0.f)
 	{
-		return RayHit{ intersection, _normal, shared_from_this(), t };
+		auto isFrontFace = glm::dot(ray.direction, _normal) < 0.f;
+		return RayHit{ intersection, _normal, shared_from_this(), t, isFrontFace };
 	}
 	else
 	{

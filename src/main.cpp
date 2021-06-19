@@ -79,7 +79,7 @@ int main(void)
         )
     );
     std::shared_ptr<Plane> rightWall = std::make_shared<Plane>(
-        glm::vec3(2.f, 0.f, 0.f),
+        glm::vec3(3.f, 0.f, 0.f),
         glm::vec3(-1.f, 0.f, 0.f),
         Material(
             glm::vec3(0.f, 1.f, 0.f),
@@ -91,7 +91,7 @@ int main(void)
         )
     );
     std::shared_ptr<Plane> leftWall = std::make_shared<Plane>(
-        glm::vec3(-2.f, 0.f, 0.f),
+        glm::vec3(-3.f, 0.f, 0.f),
         glm::vec3(1.f, 0.f, 0.f),
         Material(
             glm::vec3(1.f, 0.f, 0.f),
@@ -120,7 +120,7 @@ int main(void)
         )
     );
     std::shared_ptr<Plane> topWall = std::make_shared<Plane>(
-        glm::vec3(0.f, 2.f, 0.f),
+        glm::vec3(0.f, 3.f, 0.f),
         glm::vec3(0.f, -1.f, 0.f),
         Material(
             glm::vec3(0.5f),
@@ -132,7 +132,7 @@ int main(void)
         )
     );
     std::shared_ptr<Plane> bottomWall = std::make_shared<Plane>(
-        glm::vec3(0.f, -2.f, 0.f),
+        glm::vec3(0.f, -3.f, 0.f),
         glm::vec3(0.f, 1.f, 0.f),
         white
     );
@@ -151,7 +151,7 @@ int main(void)
     // Camera
     auto vFov = 45.f;
     auto origin = glm::vec3(0.f, 0.f, 0.f);
-    auto lookAt = glm::vec3(0.f, 0.f, 5.f);
+    auto lookAt = glm::vec3(0.f, 0.f, 1.f);
     Camera camera(image.aspectRatio(), vFov, origin, lookAt);
 
     auto start = std::chrono::steady_clock::now();
