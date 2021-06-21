@@ -12,10 +12,11 @@
 #include "Image.hpp"
 #include "Solids/Sphere.hpp"
 #include "Solids/Cylinder.hpp"
+#include "Solids/Mesh.hpp"
+#include "Solids/Plane.hpp"
 #include "LoadingBar.hpp"
 
 #include "windows.h"
-#include "Solids/Plane.hpp"
 
 constexpr auto SAMPLES = 1;
 
@@ -42,6 +43,16 @@ int main(void)
     );
 
     // Solids
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(
+        std::vector<Face>{
+        Face{ glm::vec3{0.f, 0.f, 5.f}, glm::vec3{-1.f, 1.f, 6.f}, glm::vec3{1.f, 1.f, 6.f} },
+            Face{ glm::vec3{-1.f, 1.f, 6.f}, glm::vec3{0.f, 0.f, 5.f}, glm::vec3{-1.f, 0.f, 6.f} },
+            Face{ glm::vec3{-1.f, 1.f, 6.f}, glm::vec3{0.f, 0.f, 5.f}, glm::vec3{-1.f, -1.f, 6.f} },
+            Face{ glm::vec3{-1.f, -1.f, 6.f}, glm::vec3{0.f, 0.f, 5.f}, glm::vec3{1.f, -1.f, 6.f} }
+        },
+        glm::vec3(-1.f),
+        white
+    );
     std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(
         glm::vec3(1.f, -1.f, 4.f),
         .5f,
@@ -134,6 +145,7 @@ int main(void)
     solids.push_back(std::move(backWall));
     solids.push_back(std::move(topWall));
     solids.push_back(std::move(bottomWall));
+    solids.push_back(std::move(mesh));
     //solids.push_back(std::move(cylinder));
 
     // Camera
