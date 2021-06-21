@@ -76,6 +76,11 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         auto intersectionInLightsPath = ray._calculatePathIntersections(solids);
         for (const auto& intersection : intersectionInLightsPath)
         {
+            if (glm::length(intersection.position - ray.origin) > glm::length(light.position - ray.origin))
+            {
+                continue;
+            }
+
             s *= intersection.solid->getMaterial().transparency;
             if (s == 0.f)
             {
