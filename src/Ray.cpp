@@ -63,7 +63,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         // Specular color
         auto reflection = -glm::normalize(glm::reflect(directionToLight, hit.normal));
         auto shininess = 64.f; // TODO: See specular factor (pow)
-        auto specular = 0.f * material.specular * material.specularColor * glm::pow(
+        auto specular = material.specular * material.specularColor * glm::pow(
             std::max(
                 glm::dot(reflection, glm::normalize(origin - hit.position)),
                 0.f
