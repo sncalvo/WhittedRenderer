@@ -2,6 +2,23 @@
 
 #include "../math.hpp"
 
+Disc::Disc() :
+    _center(glm::vec3(0.f)),
+    _normal(glm::vec3(0.f)),
+    _radius(1.f),
+    Solid(
+        Material{
+            glm::vec3(1.f),
+            glm::vec3(1.f),
+            1.f,
+            0.f,
+            0.f,
+            0.f
+        }
+    )
+{
+}
+
 Disc::Disc(glm::vec3 center, glm::vec3 normal, float radius, Material material) :
     _center(center),
     _normal(normal),
@@ -40,4 +57,19 @@ std::optional<RayHit> Disc::intersect(const Ray &ray)
 glm::vec3 Disc::calculateNormal(glm::vec3 point) const
 {
     return _normal;
+}
+
+glm::vec3 Disc::getCenter() const
+{
+    return _center;
+}
+
+glm::vec3 Disc::getNormal() const
+{
+    return _normal;
+}
+
+float Disc::getRadius() const
+{
+    return _radius;
 }

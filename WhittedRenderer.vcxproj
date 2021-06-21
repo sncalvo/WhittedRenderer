@@ -81,6 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)vendor\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -130,6 +131,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)vendor\lib\libyaml-cppmdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,6 +150,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)vendor\lib\libyaml-cppmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -156,6 +159,7 @@
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LoadingBar.cpp" />
     <ClCompile Include="src\Ray.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Solids\Disc.cpp" />
     <ClCompile Include="src\Solids\Cylinder.cpp" />
     <ClCompile Include="src\Solids\Plane.cpp" />
@@ -169,6 +173,7 @@
     <ClInclude Include="src\Light.hpp" />
     <ClInclude Include="src\LoadingBar.hpp" />
     <ClInclude Include="src\Pixel.hpp" />
+    <ClInclude Include="src\Scene.hpp" />
     <ClInclude Include="src\Solids\Disc.hpp" />
     <ClInclude Include="src\Log.hpp" />
     <ClInclude Include="src\Solids\Cylinder.hpp" />

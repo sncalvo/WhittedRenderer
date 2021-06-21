@@ -10,6 +10,7 @@
 #include "Ray.hpp"
 #include "Light.hpp"
 #include "math.hpp"
+#include "Scene.hpp"
 
 #include "Log.hpp"
 
@@ -21,7 +22,7 @@ float attenuation(float distance)
     return 1.f / glm::pow(distance, 2.f);
 }
 
-std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::shared_ptr<Solid>> &solids, int depth)
+std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::shared_ptr<Solid>> &solids, int depth, Scene scene)
 {
     /* Returns color in not normalized format */
 
@@ -29,7 +30,7 @@ std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::
 
     if (hits.size() > 0)
     {
-        return std::tuple(_calculateColor(hits[0], solids, depth), hits[0].solid->getMaterial());
+        return std::tuple(_calculateColor(hits[0], solids, depth, scene), hits[0].solid->getMaterial());
     }
     else
     {
@@ -37,25 +38,17 @@ std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::
     }
 }
 
-glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth)
+glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &solids, int depth, Scene scene)
 {
-    // TODO: Create singleton with list of lights
-    Light light{ glm::vec3(0.f, 0.f, 4.f), glm::vec3(1.f), 1.f, .1f };
-    //Light light2{ glm::vec3(0.f, 1.f, 5.f), glm::vec3(1.f), 1.f, .1f };
-
-    std::vector<Light> lights;
-    lights.push_back(light);
-    //lights.push_back(light2);
-
     const Material& material = hit.solid->getMaterial();
 
     // Ambient light
     glm::vec3 ambientColor = .1f * material.diffuseColor;
     glm::vec3 lightColor = glm::vec3(0.f);
 
-    for (const auto &light : lights)
+    for (const auto light : scene.getLights())
     {
-        auto directionToLight = glm::normalize(light.position - hit.position);
+        auto directionToLight = glm::normalize(light->position - hit.position);
 
         // Diffuse color
         auto diffuse = material.diffuse * material.diffuseColor * std::max(glm::dot(hit.normal, directionToLight), 0.f);
@@ -76,7 +69,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         auto intersectionInLightsPath = ray._calculatePathIntersections(solids);
         for (const auto& intersection : intersectionInLightsPath)
         {
-            if (glm::length(intersection.position - ray.origin) > glm::length(light.position - ray.origin))
+            if (glm::length(intersection.position - ray.origin) > glm::length(light->position - ray.origin))
             {
                 continue;
             }
@@ -88,9 +81,9 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
             }
         }
 
-        auto distanceToLight = glm::l2Norm(light.position, hit.position);
+        auto distanceToLight = glm::l2Norm(light->position, hit.position);
         auto lightAttenuation = attenuation(distanceToLight);
-        lightColor += s * lightAttenuation / light.decay * light.intensity * (diffuse + specular);
+        lightColor += s * lightAttenuation / light->decay * light->intensity * (diffuse + specular);
     }
 
     auto color = ambientColor + lightColor;
@@ -107,7 +100,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
             hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
             reflection
         };
-        color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1)) * material.specular;
+        color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1, scene)) * material.specular;
     }
 
     if (material.transparency > 0)
@@ -128,7 +121,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
                 hit.position + 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
                 refractionDirection
             };
-            color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1)) * material.transparency;
+            color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1, scene)) * material.transparency;
         }
     }
 
