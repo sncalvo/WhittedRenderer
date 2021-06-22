@@ -1,6 +1,7 @@
 ﻿#include "Image.hpp"
 
 #include <glm/gtx/norm.hpp>
+#include <glm/exponential.hpp>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <StbImage/stb_image_write.h>
@@ -45,7 +46,9 @@ void Image::_performGammaCorrection(glm::vec3 maxValue, unsigned int samplesPerP
         glm::vec3 currentColor = _colorBuffer[colorIndex];
         currentColor /= samplesPerPixel;
         currentColor /= maxNorm;
-        currentColor = glm::sqrt(currentColor);
+        currentColor.x = glm::pow(currentColor.x, 0.33);
+        currentColor.y = glm::pow(currentColor.y, 0.33);
+        currentColor.z = glm::pow(currentColor.z, 0.33);
         _pixelBuffer[colorIndex] = Pixel{
             (unsigned char)(currentColor.x * 255.f),
             (unsigned char)(currentColor.y * 255.f),

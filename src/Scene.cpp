@@ -358,6 +358,11 @@ int Scene::getHeight() const
     return _file["height"].as<int>();
 }
 
+int Scene::getDepth() const
+{
+    return _file["depth"].as<int>();
+}
+
 int Scene::getSamples() const
 {
     return _file["samples"].as<int>();

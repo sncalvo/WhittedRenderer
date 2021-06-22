@@ -20,6 +20,7 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 	int getSamples() const;
+	int getDepth() const;
 	float getAspectRatio() const;
 	std::vector<std::shared_ptr<Solid>> getSolids() const;
 	std::vector<std::shared_ptr<Light>> getLights() const;

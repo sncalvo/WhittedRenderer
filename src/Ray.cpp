@@ -14,7 +14,6 @@
 
 #include "Log.hpp"
 
-auto constexpr MAX_DEPTH = 2;
 auto constexpr BACKGROUND_COLOR = glm::vec3(0.f);
 
 float attenuation(float distance, const Light& light)
@@ -88,7 +87,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
 
     auto color = ambientColor + lightColor;
 
-    if (depth >= MAX_DEPTH)
+    if (depth >= scene.getDepth())
     {
         return color;
     }
