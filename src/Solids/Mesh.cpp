@@ -4,13 +4,18 @@
 
 #include <glm/gtc/constants.hpp>
 
+Mesh::Mesh() :
+    _faces(),
+    _center(glm::vec3()),
+    Solid(Material()) {}
+
 Mesh::Mesh(
     std::vector<Face> faces,
-    glm::vec3 position,
+    glm::vec3 center,
     Material material
 ) :
     _faces(faces),
-    _position(position),
+    _center(center),
     Solid(material)
 {
 }
@@ -35,7 +40,7 @@ std::optional<RayHit> Mesh::intersect(const Ray& ray)
         }
 
         float f = 1.f / a;
-        glm::vec3 s = ray.origin - (_position + face.p0);
+        glm::vec3 s = ray.origin - (_center + face.p0);
         float u = f * glm::dot(s, h);
 
         if (u < 0.f || u > 1.f)
@@ -78,4 +83,14 @@ std::optional<RayHit> Mesh::intersect(const Ray& ray)
 glm::vec3 Mesh::calculateNormal(glm::vec3 point) const
 {
     return {};
+}
+
+glm::vec3 Mesh::getCenter() const
+{
+    return _center;
+}
+
+std::vector<Face> Mesh::getFaces() const
+{
+    return _faces;
 }
