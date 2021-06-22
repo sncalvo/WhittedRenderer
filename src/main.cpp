@@ -19,8 +19,6 @@
 #include "Scene.hpp"
 #include "windows.h"
 
-constexpr auto SAMPLES = 1;
-
 // TODO: Use
 constexpr auto THREADS = 8;
 constexpr auto THREAD_LOAD = 10;
@@ -32,6 +30,7 @@ int main(void)
 
     auto width = scene.getWidth();
     auto height = scene.getHeight();
+    auto samples = scene.getSamples();
 
     Image image(width, height);
     Image reflectionImage(width, height);
@@ -52,10 +51,19 @@ int main(void)
             auto material = Material();
             auto rowIndex = (image.getHeight() - row);
 
-            for (auto sample = 0; sample < SAMPLES; ++sample)
+            for (auto sample = 0; sample < samples; ++sample)
             {
-                float u = (column + glm::linearRand(0.0, 1.0)) / (image.getWidth() - 1);
-                float v = (row + glm::linearRand(0.0, 1.0)) / (image.getHeight() - 1);
+                auto randomU = 0.f;
+                auto randomV = 0.f;
+
+                if (samples > 1)
+                {
+                    randomU = glm::linearRand(0.0, 1.0);
+                    randomV = glm::linearRand(0.0, 1.0);
+                }
+
+                float u = (column + randomU) / (image.getWidth() - 1);
+                float v = (row + randomV) / (image.getHeight() - 1);
 
                 auto ray = camera->createRay(u, v);
 
@@ -96,7 +104,7 @@ int main(void)
     auto reflectionFileNameStr = reflectionFileName.str();
     auto transparencyFileNameStr = transparencyFileName.str();
 
-    image.write(fileNameStr.c_str(), maxColor, SAMPLES);
+    image.write(fileNameStr.c_str(), maxColor, samples);
     reflectionImage.write(reflectionFileNameStr.c_str(), glm::vec3(1.f), 1);
     transparencyImage.write(transparencyFileNameStr.c_str(), glm::vec3(1.f), 1);
 

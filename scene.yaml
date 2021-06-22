@@ -1,7 +1,15 @@
 width: 1920
 height: 1080
+samples: 1
 
 materials:
+  - &transparent
+    diffuseColor: [1.0, 0.0, 1.0]
+    specularColor: [1.0, 1.0, 1.0]
+    diffuse: 0.3
+    specular: 0.0
+    transparency: 0.7
+    refractionIndex: 1.3
   - &white
     diffuseColor: [1.0, 1.0, 1.0]
     specularColor: [1.0, 1.0, 1.0]
@@ -27,7 +35,7 @@ materials:
     diffuseColor: [0.0, 1.0, 0.0]
     specularColor: [1.0, 1.0, 1.0]
     diffuse: 1.0
-    specular: 1.0
+    specular: 0.0
     transparency: 0.0
     refractionIndex: 0.0
   - &blue
@@ -45,7 +53,7 @@ materials:
     transparency: 0.0
     refractionIndex: 0.0
   - &grey
-    diffuseColor: [0.5, 0.5, 0.5]
+    diffuseColor: [0.7, 0.7, 0.7]
     specularColor: [1.0, 1.0, 1.0]
     diffuse: 1.0
     specular: 0.0
@@ -54,57 +62,93 @@ materials:
 
 solids:
   - type: "sphere"
-    center: [1.0, -1.0, 4.0]
-    radius: 0.5
+    center: [0.75, -0.75, 1.75]
+    radius: 0.25
     material: *shinyWhite
   - type: "cylinder"
-    center: [0.0, 0.0, 5.0]
-    radius: 1.0
-    height: 2.0
+    center: [-0.25, -0.5, 2]
+    radius: 0.5
+    height: 1.0
     material: *green
-  - type: "disc"
-    center: [-2.0, 0.0, 6.0]
-    normal: [0.0, 0.0, 1.0]
-    radius: 2.0
-    material: *white
+  - type: "sphere"
+    center: [-0.75, -0.25, 2]
+    radius: 0.75
+    material: *transparent
   # Right wall
   - type: "plane"
-    center: [3.0, 0.0, 0.0]
+    center: [2.0, 0.0, 0.0]
     normal: [-1.0, 0.0, 0.0]
     material: *green
   # Left wall
   - type: "plane"
-    center: [-3.0, 0.0, 0.0]
+    center: [-2.0, 0.0, 0.0]
     normal: [1.0, 0.0, 0.0]
     material: *red
   # Back wall
   - type: "plane"
-    center: [0.0, 0.0, 6.0]
+    center: [0.0, 0.0, 3.0]
     normal: [0.0, 0.0, -1.0]
     material: *white
   # Front wall
   - type: "plane"
-    center: [0.0, 0.0, -1.0]
+    center: [0.0, 0.0, -6.0]
     normal: [0.0, 0.0, 1.0]
     material: *black
   # Top wall
   - type: "plane"
-    center: [0.0, 3.0, 0.0]
+    center: [0.0, 2.0, 0.0]
     normal: [0.0, -1.0, 0.0]
     material: *grey
   # Bottom wall
   - type: "plane"
-    center: [0.0, -3.0, 0.0]
+    center: [0.0, -2.0, 0.0]
     normal: [0.0, 1.0, 0.0]
     material: *white
+  - type: "mesh"
+    center: [0.0, -1.5, 2]
+    material: *white
+    vertices:
+      - &leftBottomFront
+        [-1.2, -0.5, -0.75]
+      - &leftBottomBack
+        [-1.2, -0.5, 0.75]
+      - &rightBottomBack
+        [1.2, -0.5, 0.75]
+      - &rightBottomFront
+        [1.2, -0.5, -0.75]
+      - &leftTopFront
+        [-1.2, 0.5, -0.75]
+      - &leftTopBack
+        [-1.2, 0.5, 0.75]
+      - &rightTopBack
+        [1.2, 0.5, 0.75]
+      - &rightTopFront
+        [1.2, 0.5, -0.75]
+    faces:
+      - [*leftBottomBack, *leftBottomFront, *rightBottomBack]
+      - [*rightBottomBack, *leftBottomFront, *rightBottomFront]
+      - [*leftBottomBack, *rightBottomBack, *rightTopBack]
+      - [*leftBottomBack, *rightTopBack, *leftTopBack]
+      - [*leftTopBack, *leftBottomFront, *leftBottomBack]
+      - [*leftTopBack, *leftTopFront, *leftBottomFront]
+      - [*leftTopFront, *leftTopBack, *rightTopBack]
+      - [*leftTopFront, *rightTopBack, *rightTopFront]
+      - [*rightBottomFront, *leftBottomFront, *rightTopFront]
+      - [*rightTopFront, *leftBottomFront, *leftTopFront]
+      - [*rightBottomFront, *rightTopBack, *rightBottomBack]
+      - [*rightTopFront, *rightTopBack, *rightBottomFront]
 
 lights:
-  - position: [-1.0, 1.0, 1.0]
+  - position: [0.0, 1.8, 2.5]
     color: [1.0, 1.0, 1.0]
     intensity: 1.0
-    decay: 0.1
+    decay: 0.0000001
+  - position: [0.0, 1.8, 0.5]
+    color: [1.0, 1.0, 1.0]
+    intensity: 1.0
+    decay: 0.0000001
 
 camera:
-  vFov: 45.0
-  origin: [0.0, 1.0, 0.0]
-  lookAt: [0.0, 1.0, 1.0]
+  vFov: 65.0
+  origin: [0.0, 0.0, -2.0]
+  lookAt: [0.0, 0.0, 1.0]

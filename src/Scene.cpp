@@ -6,6 +6,7 @@
 #include "Solids/Disc.hpp"
 #include "Solids/Solid.hpp"
 #include "Solids/Plane.hpp"
+#include "Solids/Mesh.hpp"
 #include "Camera.hpp"
 
 namespace YAML {
@@ -230,6 +231,60 @@ namespace YAML {
         }
     };
 
+    template<>
+    struct convert<Face> {
+        static Node encode(const Face& rhs) {
+            Node node;
+            node.push_back(rhs.p0);
+            node.push_back(rhs.p1);
+            node.push_back(rhs.p2);
+            return node;
+        }
+
+        static bool decode(const Node& node, Face& rhs) {
+            if (!node.IsSequence() || node.size() != 3) {
+                return false;
+            }
+
+            rhs.p0 = node[0].as<glm::vec3>();
+            rhs.p1 = node[1].as<glm::vec3>();
+            rhs.p2 = node[2].as<glm::vec3>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<Mesh> {
+        static Node encode(const Mesh& rhs) {
+            Node node;
+            node["type"] = "mesh";
+            node["center"] = rhs.getCenter();
+            node["material"] = rhs.getMaterial();
+            node["faces"] = rhs.getFaces();
+            return node;
+        }
+
+        static bool decode(const Node& node, Mesh& rhs) {
+            /* Nodes are:
+                - type
+                - center
+                - material
+                - vertices
+                - faces
+            */
+            if (!node.IsMap() || node.size() != 5) {
+                return false;
+            }
+
+            rhs = Mesh(
+                node["faces"].as<std::vector<Face>>(),
+                node["center"].as<glm::vec3>(),
+                node["material"].as<Material>()
+            );
+            return true;
+        }
+    };
+
 }
 
 std::vector<std::shared_ptr<Solid>> _loadSolids(YAML::Node solids)
@@ -240,17 +295,21 @@ std::vector<std::shared_ptr<Solid>> _loadSolids(YAML::Node solids)
         {
             result.push_back(std::make_shared<Sphere>(solids[i].as<Sphere>()));
         }
-        if (solids[i]["type"].as<std::string>() == "cylinder")
+        else if (solids[i]["type"].as<std::string>() == "cylinder")
         {
             result.push_back(std::make_shared<Cylinder>(solids[i].as<Cylinder>()));
         }
-        if (solids[i]["type"].as<std::string>() == "disc")
+        else if (solids[i]["type"].as<std::string>() == "disc")
         {
             result.push_back(std::make_shared<Disc>(solids[i].as<Disc>()));
         }
-        if (solids[i]["type"].as<std::string>() == "plane")
+        else if (solids[i]["type"].as<std::string>() == "plane")
         {
             result.push_back(std::make_shared<Plane>(solids[i].as<Plane>()));
+        }
+        else if (solids[i]["type"].as<std::string>() == "mesh")
+        {
+            result.push_back(std::make_shared<Mesh>(solids[i].as<Mesh>()));
         }
     }
     return result;
@@ -291,6 +350,11 @@ int Scene::getWidth() const
 int Scene::getHeight() const
 {
     return _file["height"].as<int>();
+}
+
+int Scene::getSamples() const
+{
+    return _file["samples"].as<int>();
 }
 
 std::vector<std::shared_ptr<Solid>> Scene::getSolids() const
