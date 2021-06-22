@@ -12,6 +12,8 @@ private:
     float _radius, _height;
     glm::vec3 _center;
 
+    std::vector<float> _intersectWithCaps(const Ray& ray) const;
+
 public:
     Cylinder();
     Cylinder(glm::vec3 center, float radius, float height, Material material);

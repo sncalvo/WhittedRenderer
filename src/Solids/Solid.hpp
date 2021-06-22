@@ -9,28 +9,31 @@
 struct Material
 {
     glm::vec3 diffuseColor, specularColor;
-    float diffuse, specular, transparency, refractionIndex;
+    float diffuse, specular, transparency, refractionIndex, reflection;
     Material() :
         diffuseColor(glm::vec3(0.f)),
         specularColor(glm::vec3(0.f)),
         diffuse(0.f),
         specular(0.f),
         transparency(0.f),
-        refractionIndex(0.f) {};
+        refractionIndex(0.f),
+        reflection(0.f) {};
     Material(
         glm::vec3 diffuseColor,
         glm::vec3 specularColor,
         float diffuse,
         float specular,
         float transparency,
-        float refractionIndex
+        float refractionIndex,
+        float reflection
     ) :
         diffuseColor(diffuseColor),
         specularColor(specularColor),
         diffuse(diffuse),
         specular(specular),
         transparency(transparency),
-        refractionIndex(refractionIndex) {};
+        refractionIndex(refractionIndex),
+        reflection(reflection) {};
 };
 
 class Solid : public std::enable_shared_from_this<Solid>

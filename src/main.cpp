@@ -74,7 +74,7 @@ int main(void)
                 }
             }
 
-            auto reflectionColor = glm::vec3(material.specular);
+            auto reflectionColor = glm::vec3(material.reflection);
             auto transparencyColor = glm::vec3(material.transparency);
 
             reflectionImage[(size_t)rowIndex * image.getWidth() + column] = reflectionColor;

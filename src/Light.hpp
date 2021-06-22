@@ -5,5 +5,5 @@
 struct Light
 {
     glm::vec3 position, color;
-    float intensity, decay;
+    float intensity, constantDecay, linearDecay, quadraticDecay;
 };

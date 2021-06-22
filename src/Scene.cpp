@@ -42,11 +42,12 @@ namespace YAML {
             node["specular"] = rhs.specular;
             node["transparency"] = rhs.transparency;
             node["refractionIndex"] = rhs.refractionIndex;
+            node["reflection"] = rhs.reflection;
             return node;
         }
 
         static bool decode(const Node& node, Material& rhs) {
-            if (!node.IsMap() || node.size() != 6) {
+            if (!node.IsMap() || node.size() != 7) {
                 return false;
             }
 
@@ -56,6 +57,7 @@ namespace YAML {
             rhs.specular = node["specular"].as<float>();
             rhs.transparency = node["transparency"].as<float>();
             rhs.refractionIndex = node["refractionIndex"].as<float>();
+            rhs.reflection = node["reflection"].as<float>();
             return true;
         }
     };
@@ -163,13 +165,15 @@ namespace YAML {
             node["position"] = rhs.position;
             node["color"] = rhs.color;
             node["intensity"] = rhs.intensity;
-            node["decay"] = rhs.decay;
+            node["constantDecay"] = rhs.constantDecay;
+            node["linearDecay"] = rhs.linearDecay;
+            node["quadraticDecay"] = rhs.quadraticDecay;
             return node;
         }
 
         static bool decode(const Node& node, Light& rhs)
         {
-            if (!node.IsMap() || node.size() != 4)
+            if (!node.IsMap() || node.size() != 6)
             {
                 return false;
             }
@@ -177,7 +181,9 @@ namespace YAML {
             rhs.position = node["position"].as<glm::vec3>();
             rhs.color = node["color"].as<glm::vec3>();
             rhs.intensity = node["intensity"].as<float>();
-            rhs.decay = node["decay"].as<float>();
+            rhs.constantDecay = node["constantDecay"].as<float>();
+            rhs.linearDecay = node["linearDecay"].as<float>();
+            rhs.quadraticDecay = node["quadraticDecay"].as<float>();
             return true;
         }
     };

@@ -17,9 +17,9 @@
 auto constexpr MAX_DEPTH = 2;
 auto constexpr BACKGROUND_COLOR = glm::vec3(0.f);
 
-float attenuation(float distance, float decay)
+float attenuation(float distance, const Light& light)
 {
-    return 1.f / (1.f + 0.09f * distance + 0.032f * glm::pow(distance, 2.f));
+    return 1.f / (light.constantDecay + light.linearDecay * distance + light.quadraticDecay * glm::pow(distance, 2.f));
 }
 
 std::tuple<glm::vec3, Material> Ray::calculateColorAndMaterial(std::vector<std::shared_ptr<Solid>> &solids, int depth, Scene scene)
@@ -51,12 +51,12 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         auto directionToLight = glm::normalize(light->position - hit.position);
 
         // Diffuse color
-        auto diffuse = material.diffuse * material.diffuseColor * std::max(glm::dot(hit.normal, directionToLight), 0.f);
+        auto diffuse = material.diffuse * material.diffuseColor * light->color * std::max(glm::dot(hit.normal, directionToLight), 0.f);
 
         // Specular color
         auto reflection = -glm::normalize(glm::reflect(directionToLight, hit.normal));
         auto shininess = 64.f; // TODO: See specular factor (pow)
-        auto specular = material.specular * material.specularColor * glm::pow(
+        auto specular = material.specular * material.specularColor * light->color * glm::pow(
             std::max(
                 glm::dot(reflection, glm::normalize(origin - hit.position)),
                 0.f
@@ -82,7 +82,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         }
 
         auto distanceToLight = glm::l2Norm(light->position, hit.position);
-        auto lightAttenuation = attenuation(distanceToLight, light->decay);
+        auto lightAttenuation = attenuation(distanceToLight, *light);
         lightColor += s * lightAttenuation * light->intensity * (diffuse + specular);
     }
 
@@ -93,14 +93,14 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
         return color;
     }
 
-    if (material.specular > 0)
+    if (material.reflection > 0)
     {
         auto reflection = glm::normalize(glm::reflect(direction, hit.normal));
         Ray ray{
             hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction,
             reflection
         };
-        color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1, scene)) * material.specular;
+        color += std::get<0>(ray.calculateColorAndMaterial(solids, depth + 1, scene)) * material.reflection;
     }
 
     if (material.transparency > 0)
