@@ -39,7 +39,7 @@ float Image::aspectRatio() const
 
 void Image::_performGammaCorrection(glm::vec3 maxValue, unsigned int samplesPerPixel)
 {
-    auto maxNorm = glm::l2Norm(maxValue);
+    auto maxNorm = glm::l2Norm(maxValue / (float)samplesPerPixel);
 
     for (unsigned int colorIndex = 0; colorIndex < getWidth() * getHeight(); colorIndex++)
     {
