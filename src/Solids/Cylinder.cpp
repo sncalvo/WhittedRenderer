@@ -29,7 +29,6 @@ std::optional<RayHit> Cylinder::intersect(const Ray &ray)
         math::square(_center.x) + math::square(_center.z) - 2 *
         (ray.origin.x * _center.x + ray.origin.z * _center.z) - math::square(_radius);
 
-    // TODO: Add top and bottom caps
     auto roots = math::solve(a, b, c);
 
     auto discTop = std::make_shared<Disc>(_center + glm::vec3(0.f, _height / 2.f, 0.f), glm::vec3(0.f, 1.f, 0.f) , _radius, _material);
