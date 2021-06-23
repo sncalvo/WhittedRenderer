@@ -63,7 +63,7 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
             shininess
         );
 
-        auto s = 1.f;
+        auto s = glm::vec3(1.f);
         Ray ray{ hit.position - 1000.f * glm::vec3(glm::epsilon<float>()) * direction, directionToLight };
         auto intersectionInLightsPath = ray._calculatePathIntersections(solids);
         for (const auto& intersection : intersectionInLightsPath)
@@ -73,8 +73,8 @@ glm::vec3 Ray::_calculateColor(RayHit hit, std::vector<std::shared_ptr<Solid>> &
                 continue;
             }
 
-            s *= intersection.solid->getMaterial().transparency;
-            if (s == 0.f)
+            s *= intersection.solid->getMaterial().diffuseColor * intersection.solid->getMaterial().diffuse * intersection.solid->getMaterial().transparency;
+            if (glm::l2Norm(s) <= glm::epsilon<float>())
             {
                 break;
             }

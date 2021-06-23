@@ -1,15 +1,15 @@
-width: 1920
-height: 1080
-samples: 20
+width: 1280
+height: 720
+samples: 1
 depth: 5
 
 materials:
   - &transparent
     diffuseColor: [1.0, 0.0, 1.0]
     specularColor: [1.0, 1.0, 1.0]
-    diffuse: 0.5
+    diffuse: 0.1
     specular: 0.5
-    transparency: 0.5
+    transparency: 0.9
     refractionIndex: 1.3
     reflection: 0.0
   - &white
@@ -35,7 +35,7 @@ materials:
     specular: 0.0
     transparency: 0.0
     refractionIndex: 0.0
-    reflection: 1.0
+    reflection: 0.0
   - &green
     diffuseColor: [0.0, 1.0, 0.0]
     specularColor: [1.0, 1.0, 1.0]
@@ -43,7 +43,7 @@ materials:
     specular: 0.0
     transparency: 0.0
     refractionIndex: 0.0
-    reflection: 1.0
+    reflection: 0.0
   - &blue
     diffuseColor: [0.0, 0.0, 1.0]
     specularColor: [1.0, 1.0, 1.0]
